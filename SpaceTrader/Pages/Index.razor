@@ -1,7 +1,136 @@
 ﻿@page "/"
+@using RestSharp
+@using RestSharp.Authenticators;
+@using SpaceTrader.Data
+@using SpaceTrader.Components
+@inject RestClient _client
+@inject AgentDbController _database
 
-<h1>Hello, world!</h1>
+<h1>Agents</h1>
+<p style="color:red">@Error</p>
+@if (_allAgents == null)
+{
+    <p><em>Loading...</em></p>
+} else
+{
+    <p>
+        <button class="btn btn-success"
+        @onclick="AddNew">
+            Add New Agent
+        </button>
 
-Welcome to your new app.
+        <button class="btn btn-success"
+        @onclick="AddExisting">
+            Add Existing Agent
+        </button>
+    </p>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                var count = 0;
+                foreach (var agent in _allAgents)
+                {
+                    <tr>
+                        <td>@count++</td>
+                        <td>@agent.Name</td>
+                        <td>
+                            <button class="btn btn-primary"
+                            @onclick="(() => Delete(agent))">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if(_dialogOpen)
+    {
+        <InputDialog Caption="@_title"
+                       Message="@_message"
+                       PlaceHolder="@_placeholder"
+                       OnClose="CreateNewAgent"/>
+    }
+}
+@code {
+    private List<AgentData> _allAgents;
+    private AgentData _agent;
+
+    private string Error = string.Empty;
+
+    //Add Agent Dialog
+    private bool _dialogOpen = false;
+    private string _title = string.Empty;
+    private string _message = string.Empty;
+    private string _placeholder = string.Empty;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        _allAgents = await _database.GetAll();
+    }
+
+    private void AddNew()
+    {
+        _dialogOpen = true;
+        _title = "Create New Agent";
+        _message = "Enter the name you wish to use for the agent";
+        _placeholder = "Agent Name";
+    }
+
+    private void AddExisting()
+    {
+        _dialogOpen = true;
+        _title = "Retrieve Existing Agent";
+        _message = "Enter your agent token.";
+        _placeholder = "Agent Token";
+    }
+
+    private async Task RetrieveAgent(string token)
+    {
+        _dialogOpen = false;
+
+        if (string.IsNullOrWhiteSpace(token))
+            return;
+
+
+        var request = new RestRequest("/my/agent", Method.Get);
+        request.Authenticator = new JwtAuthenticator(token);
+
+        var data = await _client.GetAsync<Response<Agent>>(request);
+
+        var agent = new AgentData();
+        agent.Name = data.Data.Name;
+        agent.Token = token;
+        await _database.Create(agent);
+    }
+
+    private async Task CreateNewAgent(string name)
+    {
+        _dialogOpen = false;
+
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        //TODO: sent POST https://api.spacetraders.io/v2/register
+        
+
+
+        var agent = new AgentData();
+        await _database.Create(agent);
+    }
+
+    private void Delete(AgentData agent)
+    {
+            
+    }
+}
