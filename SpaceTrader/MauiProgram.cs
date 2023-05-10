@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RestSharp;
 using SpaceTrader.Data;
 
 namespace SpaceTrader;
@@ -22,7 +23,11 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		builder.Services.AddSingleton<WeatherForecastService>();
+		var clientOptions = new RestClientOptions("https://api.spacetraders.io/v2");
+		builder.Services.AddSingleton<RestClient>();
+
+		var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Agents.db");
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
 
 		return builder.Build();
 	}
