@@ -1,0 +1,39 @@
+﻿@page "/myagent"
+@using RestSharp
+@using SpaceTrader.Data
+@inject RestClient _client
+
+<h1>My Agent</h1>
+@if(_myAgent == null)
+{
+    if(string.IsNullOrWhiteSpace(Error))
+    {
+        <p>Loading . . .</p>
+    }
+    else
+    {
+        <p style="color:red">@Error</p>
+    }
+}
+else
+{
+    <p>@_myAgent.Name</p>
+}
+@code {
+    private Agent _myAgent;
+    private string Error = string.Empty;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest("/my/agent");
+        var response = await _client.ExecuteGetAsync<Response<Agent>>(request);
+
+        if(response.IsSuccessStatusCode)
+        {
+            _myAgent = response.Data.Data;
+            return;
+        }
+
+        Error = response.ErrorMessage ?? response.StatusDescription ?? response.ErrorException.Message;
+    }
+}
