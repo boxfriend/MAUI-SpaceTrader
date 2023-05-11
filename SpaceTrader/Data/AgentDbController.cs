@@ -13,10 +13,12 @@ internal class AgentDbController
 
     public async Task InitializeAsync()
     {
+        
         if (_connection != null)
             return;
 
         _connection = new(_dbPath);
+
         await _connection.CreateTableAsync<AgentData>();
     }
 
@@ -24,6 +26,12 @@ internal class AgentDbController
     {
         await InitializeAsync();
         return await _connection.Table<AgentData>().ToListAsync();
+    }
+
+    public async Task<AgentData> Get(string accountID)
+    {
+        await InitializeAsync();
+        return await _connection.FindAsync<AgentData>(accountID);
     }
     public async Task<AgentData> Create (AgentData data)
     {
