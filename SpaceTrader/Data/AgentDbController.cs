@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace SpaceTrader.Data;
 internal class AgentDbController
 {
     private readonly string _dbPath;
-    private SQLite.SQLiteAsyncConnection _connection;
+    private SQLiteAsyncConnection _connection;
 
     public AgentDbController(string path)
     {
@@ -37,11 +32,4 @@ internal class AgentDbController
     }
 
     public async Task Delete (AgentData data) => await _connection.DeleteAsync(data);
-}
-
-public class AgentData
-{
-    [PrimaryKey,AutoIncrement] public int ID { get; set; }
-    [Unique] public string Name { get; set; }
-    [Unique] public string Token { get; set; }
 }
