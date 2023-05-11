@@ -23,8 +23,8 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		var clientOptions = new RestClientOptions("https://api.spacetraders.io/v2");
-		builder.Services.AddSingleton<RestClient>();
+		var clientOptions = new RestClientOptions(@"https://api.spacetraders.io/v2");
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<RestClient>(s, clientOptions));
 
 		var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Agents.db");
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
