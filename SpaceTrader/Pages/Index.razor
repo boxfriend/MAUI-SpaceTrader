@@ -5,6 +5,7 @@
 @using SpaceTrader.Components
 @inject RestClient _client
 @inject AgentDbController _database
+@inject NavigationManager _navManager
 
 <h1>Agents</h1>
 <p style="color:red">@Error</p>
@@ -30,25 +31,38 @@
             <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Credits</th>
+                <th>Account ID</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
 
             @{
-                var count = 0;
+                var count = 1;
                 foreach (var agent in _allAgents)
                 {
                     <tr>
-                        <td>@count++</td>
+                        <td>@count</td>
                         <td>@agent.Name</td>
+                        <td>@agent.Credits</td>
+                        <td>@agent.AccountID</td>
                         <td>
                             <button class="btn btn-primary"
+                            @onclick="(() => Login(agent))">
+                                Login
+                            </button>
+                            <button class="btn btn-danger"
                             @onclick="(() => Delete(agent))">
                                 Delete
                             </button>
+                            <button class="btn btn-secondary"
+                            @onclick="(() => ViewDetails(agent))">
+                                Info
+                            </button>
                         </td>
                     </tr>
+                    count++;
                 }
             }
         </tbody>
@@ -59,7 +73,7 @@
         <InputDialog Caption="@_title"
                        Message="@_message"
                        PlaceHolder="@_placeholder"
-                       OnClose="CreateNewAgent"/>
+                       OnClose="@_onDialogComplete"/>
     }
 }
 @code {
@@ -73,6 +87,7 @@
     private string _title = string.Empty;
     private string _message = string.Empty;
     private string _placeholder = string.Empty;
+    private Func<string, Task> _onDialogComplete = null;
 
     protected override async Task OnInitializedAsync ()
     {
@@ -85,6 +100,7 @@
         _title = "Create New Agent";
         _message = "Enter the name you wish to use for the agent";
         _placeholder = "Agent Name";
+        _onDialogComplete = CreateNewAgent;
     }
 
     private void AddExisting()
@@ -93,6 +109,7 @@
         _title = "Retrieve Existing Agent";
         _message = "Enter your agent token.";
         _placeholder = "Agent Token";
+        _onDialogComplete = RetrieveAgent;
     }
 
     private async Task RetrieveAgent(string token)
@@ -102,16 +119,26 @@
         if (string.IsNullOrWhiteSpace(token))
             return;
 
-
-        var request = new RestRequest("/my/agent", Method.Get);
+        var request = new RestRequest(@"my/agent", Method.Get);
         request.Authenticator = new JwtAuthenticator(token);
 
-        var data = await _client.GetAsync<Response<Agent>>(request);
+        try
+        {
+            var response = await _client.ExecuteGetAsync<Response<Agent>>(request);
 
-        var agent = new AgentData();
-        agent.Name = data.Data.Name;
-        agent.Token = token;
-        await _database.Create(agent);
+            if(response.IsSuccessStatusCode)
+            {
+                var agent = new AgentData();
+                agent.Name = response.Data.Data.Name;
+                agent.Token = token;
+                await _database.Create(agent);
+            } else
+            {
+                Error = response.ErrorMessage ?? response.ErrorException.Message;
+            }
+
+        } catch (Exception){ }
+
     }
 
     private async Task CreateNewAgent(string name)
@@ -122,15 +149,43 @@
             return;
 
         //TODO: sent POST https://api.spacetraders.io/v2/register
-        
+        var request = new RestRequest(@"register", Method.Post);
 
+        request.AddJsonBody(new { symbol = name, faction = "COSMIC" });
 
-        var agent = new AgentData();
-        await _database.Create(agent);
+        try
+        {
+            var response = await _client.ExecutePostAsync<Response<Registration>>(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var registration = response.Data.Data;
+                var agent = AgentData.FromAPIObject(registration.Agent, registration.Token);
+                await _database.Create(agent);
+                _allAgents.Add(agent);
+            } else
+            {
+                Error = response.StatusDescription ?? (response.ErrorMessage ?? response.ErrorException.Message);
+            }
+
+        } catch (Exception) { }
+
     }
 
-    private void Delete(AgentData agent)
+    private async Task Delete(AgentData agent)
     {
-            
+        await _database.Delete(agent);
+    }
+
+    private void Login(AgentData agent)
+    {
+        _client.DefaultParameters.RemoveParameter("Authorization", ParameterType.HttpHeader);
+        _client.AddDefaultHeader("Authorization", $"Bearer {agent.Token}");
+        _navManager.NavigateTo("myagent");
+    }
+
+    private void ViewDetails(AgentData agent)
+    {
+        _navManager.NavigateTo($"agentdetails/{agent.AccountID}");
     }
 }
