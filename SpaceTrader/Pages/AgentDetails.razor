@@ -1,0 +1,19 @@
+﻿@page "/agentdetails/{accountid}"
+@using SpaceTrader.Data
+@inject AgentDbController _database
+<h3>AgentDetails</h3>
+@if(_agent != null)
+{
+    <p>@_agent.Name</p>
+    <p>@_agent.Token</p>
+}
+@code {
+    [Parameter] public string AccountID { get; set; }
+
+    private AgentData _agent;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        _agent = await _database.Get(AccountID);
+    }
+}
