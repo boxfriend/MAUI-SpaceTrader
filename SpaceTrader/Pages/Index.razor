@@ -128,9 +128,7 @@
 
             if(response.IsSuccessStatusCode)
             {
-                var agent = new AgentData();
-                agent.Name = response.Data.Data.Name;
-                agent.Token = token;
+                var agent = AgentData.FromAPIObject(response.Data.Data, token);
                 await _database.Create(agent);
             } else
             {
