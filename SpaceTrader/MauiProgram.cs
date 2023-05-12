@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using RestSharp;
+using RestSharp.Serializers.Json;
 using SpaceTrader.Data;
 
 namespace SpaceTrader;
@@ -24,7 +26,8 @@ public static class MauiProgram
 #endif
 
 		var clientOptions = new RestClientOptions(@"https://api.spacetraders.io/v2");
-		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<RestClient>(s, clientOptions));
+		var serializeOptions = new JsonSerializerOptions(new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        builder.Services.AddSingleton(s => new RestClient(clientOptions,configureSerialization: s => s.UseSystemTextJson(serializeOptions)));
 
 		var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Agents.db");
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
