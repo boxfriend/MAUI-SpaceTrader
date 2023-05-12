@@ -1,0 +1,43 @@
+﻿@page "/shipdetails/{symbol}"
+@using SpaceTrader.Data
+@using RestSharp
+@inject RestClient _client
+<h3>ShipDetails</h3>
+@if(_ship == null)
+{
+    if(string.IsNullOrWhiteSpace(Error))
+    {
+        <p>Loading . . .</p>
+    }
+    else
+    {
+        <p style="color:red">@Error</p>
+    }
+}
+else
+{
+    <h3>@_ship.Symbol</h3>
+    <p>ToDo: Finish this page</p>
+}
+
+@code {
+    [Parameter] public string Symbol { get; set; }
+
+    private Ship _ship;
+    private string Error = string.Empty;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest($"/my/ships/{Symbol}", Method.Get);
+        var response = await _client.ExecuteGetAsync<Response<Ship>>(request);
+
+        if(response.IsSuccessful)
+        {
+            _ship = response.Data.Data;
+        }
+        else
+        {
+            Error = (!response.IsSuccessStatusCode ? response.StatusDescription : null) ?? response.ErrorMessage ?? response.ErrorException.Message;
+        }
+    }
+}
