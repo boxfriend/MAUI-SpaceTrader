@@ -48,8 +48,8 @@
                         <td>@agent.Credits</td>
                         <td>@agent.AccountID</td>
                         <td>
-                            <button class="btn btn-primary"
-                            @onclick="(() => Login(agent))">
+                            <button class="btn btn-primary" disabled="@IsLoggedIn(agent.Token)"
+                            @onclick="(() => Login(agent.Token))">
                                 Login
                             </button>
                             <button class="btn btn-danger"
@@ -130,6 +130,8 @@
             {
                 var agent = AgentData.FromAPIObject(response.Data.Data, token);
                 await _database.Create(agent);
+                _allAgents.Add(agent);
+                Login(token);
             } else
             {
                 Error = response.ErrorMessage ?? response.ErrorException.Message;
@@ -161,6 +163,7 @@
                 var agent = AgentData.FromAPIObject(registration.Agent, registration.Token);
                 await _database.Create(agent);
                 _allAgents.Add(agent);
+                Login(agent.Token);
             } else
             {
                 Error = response.StatusDescription ?? (response.ErrorMessage ?? response.ErrorException.Message);
@@ -175,15 +178,20 @@
         await _database.Delete(agent);
     }
 
-    private void Login(AgentData agent)
+    private void Login(string token)
     {
         _client.DefaultParameters.RemoveParameter("Authorization", ParameterType.HttpHeader);
-        _client.AddDefaultHeader("Authorization", $"Bearer {agent.Token}");
+        _client.AddDefaultHeader("Authorization", $"Bearer {token}");
         _navManager.NavigateTo("myagent");
     }
 
     private void ViewDetails(AgentData agent)
     {
         _navManager.NavigateTo($"agentdetails/{agent.AccountID}");
+    }
+
+    private bool IsLoggedIn(string token)
+    {
+        return _client.DefaultParameters.Any(x => x.Name == "Authorization" && x.Value as string == $"Bearer {token}");
     }
 }
