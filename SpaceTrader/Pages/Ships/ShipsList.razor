@@ -1,0 +1,100 @@
+﻿@page "/shipslist"
+@using SpaceTrader.Data
+@using RestSharp
+@inject RestClient _client
+@inject NavigationManager _navManager
+<h3>Agent Ships</h3>
+<p style="color:red">@Error</p>
+
+@if (_ships != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th width="10%">#</th>
+                <th width="30%">Symbol</th>
+                <th width="30%">Name</th>
+                <th width="20%">Fuel</th>
+                <th width="10%"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                var count = (_currentPage - 1) * _limit;
+                foreach (var ship in _ships)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@ship.Symbol</td>
+                        <td>@ship.Registration.Name</td>
+                        <td>@ship.Fuel.Current / @ship.Fuel.Capacity</td>
+                        <td>
+                            <button type="button" class="btn btn-info"
+                            @onclick="(() => ShipDetails(ship.Symbol))">
+                                Details
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            }
+        </tbody>
+
+        <button type="button" class="btn btn-info" disabled="@(_currentPage == 1)"
+        @onclick="(() => LoadPage(_currentPage - 1))">
+            Prev Page
+        </button>
+        <button type="button" class="btn btn-info" disabled="@(_total < _currentPage * _limit)"
+        @onclick="(() => LoadPage(_currentPage + 1))">
+            Next Page
+        </button>
+
+    </table>
+}
+else
+{
+    <p>Loading . . .</p>
+}
+@code {
+    private Ship[] _ships;
+
+    private int _limit = 20;
+    private int _currentPage = 1;
+    private int _total = 1;
+
+    private int MaxPages => (int)Math.Ceiling(_total / (float)_limit);
+
+    private string Error = string.Empty;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        await LoadPage(1);
+    }
+
+    private async Task LoadPage(int page)
+    {
+        page = Math.Clamp(page, 1, MaxPages);
+        var request = new RestRequest("/my/ships", Method.Get);
+        request.AddParameter("limit", _limit);
+        request.AddParameter("page", page);
+
+        var response = await _client.ExecuteGetAsync<Response<Ship[]>>(request);
+
+        if(response.IsSuccessful)
+        {
+            _currentPage = page;
+            _total = response.Data.Meta.Total;
+            _ships = response.Data.Data;
+        }
+        else
+        {
+            Error = (!response.IsSuccessStatusCode ? response.StatusDescription : null ) ?? response.ErrorMessage ?? response.ErrorException.Message;
+        }
+    }
+
+    private void ShipDetails(string symbol)
+    {
+        _navManager.NavigateTo($"/shipdetails/{symbol}");
+    }
+}
