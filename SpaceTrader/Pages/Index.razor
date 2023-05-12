@@ -179,7 +179,9 @@
 
     private void Login(string token)
     {
+        //TODO: Magic this away into possibly another singleton, make client not singleton and instead controlled by new singleton
         _client.DefaultParameters.RemoveParameter("Authorization", ParameterType.HttpHeader);
+        //Is this really the only way to set the bearer token without creating a new instance?
         _client.AddDefaultHeader("Authorization", $"Bearer {token}");
         _navManager.NavigateTo("myagent");
     }
