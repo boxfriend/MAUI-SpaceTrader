@@ -14,12 +14,6 @@ internal abstract record ApiObject();
 internal record RegisterData(string Symbol, string Faction);
 internal record Registration(Agent Agent, Contract Contract, Faction Faction, Ship Ship, string Token) : ApiObject;
 
-internal record ShipList (Ship[] Ships) : ApiObject
-{
-    public static implicit operator ShipList (Ship[] ships) => new(ships);
-}
-
-
 internal record Agent([property:JsonPropertyName("accountId")]string AccountID, [property: JsonPropertyName("symbol")] string Name, 
     [property: JsonPropertyName("headquarters")] string Headquarters, [property: JsonPropertyName("credits")] int Credits) : ApiObject;
 
