@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using RestSharp;
-using RestSharp.Serializers.Json;
+﻿using Microsoft.Extensions.Logging;
 using Serilog;
 using SpaceTrader.Data;
 
@@ -29,33 +25,23 @@ public static class MauiProgram
 		var envPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MAUI-SpaceTraders");
 		Directory.CreateDirectory(envPath);
 
-		InitLogger(envPath);
-
-        var clientOptions = new RestClientOptions(@"https://api.spacetraders.io/v2");
-		var serializeOptions = new JsonSerializerOptions(new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        builder.Services.AddSingleton(s => new RestClient(clientOptions,configureSerialization: s => s.UseSystemTextJson(serializeOptions)));
-
-		var path = Path.Combine(envPath, "Agents.db");
-		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
-
-		return builder.Build();
-	}
-
-    private static void InitLogger (string path)
-    {
-		const string template = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
-
-        Log.Logger = new LoggerConfiguration()
+        const string template = @"{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
+        builder.Services.AddLogging(logging => logging.AddSerilog(new LoggerConfiguration()
 #if DEBUG
             .MinimumLevel.Verbose()
-			.WriteTo.Async(a => a.Console(outputTemplate: template))
+            .WriteTo.Console(outputTemplate: template)
 #else
             .MinimumLevel.Information()
 #endif
-            .WriteTo.Async(a => a.File(Path.Combine(path, "log.txt"),
+            .WriteTo.Async(a => a.File(Path.Combine(envPath, "log.txt"),
                 outputTemplate: template))
-            .CreateLogger();
+            .CreateLogger()));
 
-        Log.Information("Serilog Initialized. Logging started.");
-    }
+        var path = Path.Combine(envPath, "Agents.db");
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
+
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ApiClient>(s));
+
+		return builder.Build();
+	}
 }
