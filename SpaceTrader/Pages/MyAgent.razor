@@ -1,7 +1,6 @@
 ﻿@page "/myagent"
-@using RestSharp
 @using SpaceTrader.Data
-@inject RestClient _client
+@inject ApiClient _client
 
 <h1>My Agent</h1>
 @if(_myAgent == null)
@@ -26,14 +25,15 @@ else
     protected override async Task OnInitializedAsync ()
     {
         var request = new RestRequest("/my/agent");
-        var response = await _client.ExecuteGetAsync<Response<Agent>>(request);
+        var response = await _client.GetRequest<Agent>(request, true);
 
-        if(response.IsSuccessStatusCode)
+        if(response is not null)
         {
-            _myAgent = response.Data.Data;
+            _myAgent = response.Data;
             return;
+        } else
+        {
+            Error = "An unknown error occurred. Please make sure you have logged in.";
         }
-
-        Error = response.ErrorMessage ?? response.StatusDescription ?? response.ErrorException.Message;
     }
 }

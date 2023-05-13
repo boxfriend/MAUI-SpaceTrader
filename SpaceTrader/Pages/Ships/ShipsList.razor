@@ -1,5 +1,5 @@
 ﻿@page "/shipslist"
-@inject RestClient _client
+@inject ApiClient _client
 @inject NavigationManager _navManager
 <h3>Agent Ships</h3>
 <p style="color:red">@Error</p>
@@ -77,17 +77,17 @@ else
         request.AddParameter("limit", _limit);
         request.AddParameter("page", page);
 
-        var response = await _client.ExecuteGetAsync<Response<Ship[]>>(request);
+        var response = await _client.GetRequest<Ship[]>(request, true);
 
-        if(response.IsSuccessful)
+        if(response is not null)
         {
             _currentPage = page;
-            _total = response.Data.Meta.Total;
-            _ships = response.Data.Data;
+            _total = response.Meta.Total;
+            _ships = response.Data;
         }
         else
         {
-            Error = (!response.IsSuccessStatusCode ? response.StatusDescription : null ) ?? response.ErrorMessage ?? response.ErrorException.Message;
+            Error = "Unable to retrieve ships, make sure you are logged in";
         }
     }
 

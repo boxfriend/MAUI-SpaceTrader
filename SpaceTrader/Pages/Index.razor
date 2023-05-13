@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using RestSharp.Authenticators;
 @using SpaceTrader.Components
-@inject RestClient _client
+@inject ApiClient _client
 @inject AgentDbController _database
 @inject NavigationManager _navManager
 
@@ -46,8 +46,8 @@
                         <td>@agent.Credits</td>
                         <td>@agent.AccountID</td>
                         <td>
-                            <button class="btn btn-primary" disabled="@IsLoggedIn(agent.Token)"
-                            @onclick="(() => Login(agent.Token))">
+                            <button class="btn btn-primary" disabled="@_client.IsLoggedInAgent(agent)"
+                            @onclick="(() => _client.Login(agent))">
                                 Login
                             </button>
                             <button class="btn btn-danger"
@@ -99,6 +99,7 @@
         _message = "Enter the name you wish to use for the agent";
         _placeholder = "Agent Name";
         _onDialogComplete = CreateNewAgent;
+        ClearError();
     }
 
     private void AddExisting()
@@ -108,6 +109,7 @@
         _message = "Enter your agent token.";
         _placeholder = "Agent Token";
         _onDialogComplete = RetrieveAgent;
+        ClearError();
     }
 
     private async Task RetrieveAgent(string token)
@@ -117,27 +119,20 @@
         if (string.IsNullOrWhiteSpace(token))
             return;
 
-        var request = new RestRequest(@"my/agent", Method.Get);
-        request.Authenticator = new JwtAuthenticator(token);
-
-        try
+        var agent = await _client.RetrieveAgent(token);
+        if(agent is not null)
         {
-            var response = await _client.ExecuteGetAsync<Response<Agent>>(request);
-
-            if(response.IsSuccessStatusCode)
-            {
-                var agent = AgentData.FromAPIObject(response.Data.Data, token);
-                await _database.Create(agent);
-                _allAgents.Add(agent);
-                Login(token);
-            } else
-            {
-                Error = response.ErrorMessage ?? response.ErrorException.Message;
-            }
-
-        } catch (Exception){ }
-
+            await _database.Create(agent);
+            _allAgents.Add(agent);
+            _client.Login(agent);
+        }
+        else
+        {
+            Error = "Unable to retrieve agent.";
+        }
     }
+
+    private void ClearError() => Error = string.Empty;
 
     private async Task CreateNewAgent(string name)
     {
@@ -146,53 +141,29 @@
         if (string.IsNullOrWhiteSpace(name))
             return;
 
-        //TODO: sent POST https://api.spacetraders.io/v2/register
-        var request = new RestRequest(@"register", Method.Post);
-
-        request.AddJsonBody(new { symbol = name, faction = "COSMIC" });
-
-        try
+        var registration = await _client.RegisterNewAgent(name, "COSMIC");
+        if(registration is not null)
         {
-            var response = await _client.ExecutePostAsync<Response<Registration>>(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var registration = response.Data.Data;
-                var agent = AgentData.FromAPIObject(registration.Agent, registration.Token);
-                await _database.Create(agent);
-                _allAgents.Add(agent);
-                Login(agent.Token);
-            } else
-            {
-                Error = response.StatusDescription ?? (response.ErrorMessage ?? response.ErrorException.Message);
-            }
-
-        } catch (Exception) { }
-
+            var agent = AgentData.FromAPIObject(registration.Agent, registration.Token);
+            await _database.Create(agent);
+            _allAgents.Add(agent);
+            _client.Login(agent);
+        }
+        else
+        {
+            Error = $"Unable to register agent {name}";
+        }
     }
 
     private async Task Delete(AgentData agent)
     {
         await _database.Delete(agent);
         _allAgents.Remove(agent);
-    }
-
-    private void Login(string token)
-    {
-        //TODO: Magic this away into possibly another singleton, make client not singleton and instead controlled by new singleton
-        _client.DefaultParameters.RemoveParameter("Authorization", ParameterType.HttpHeader);
-        //Is this really the only way to set the bearer token without creating a new instance?
-        _client.AddDefaultHeader("Authorization", $"Bearer {token}");
-        _navManager.NavigateTo("myagent");
+        ClearError();
     }
 
     private void ViewDetails(AgentData agent)
     {
         _navManager.NavigateTo($"agentdetails/{agent.AccountID}");
-    }
-
-    private bool IsLoggedIn(string token)
-    {
-        return _client.DefaultParameters.Any(x => x.Name == "Authorization" && x.Value as string == $"Bearer {token}");
     }
 }

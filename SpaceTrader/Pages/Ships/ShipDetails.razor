@@ -1,5 +1,5 @@
 ﻿@page "/shipdetails/{symbol}"
-@inject RestClient _client
+@inject ApiClient _client
 <h3>ShipDetails</h3>
 @if(_ship == null)
 {
@@ -27,15 +27,15 @@ else
     protected override async Task OnInitializedAsync ()
     {
         var request = new RestRequest($"/my/ships/{Symbol}", Method.Get);
-        var response = await _client.ExecuteGetAsync<Response<Ship>>(request);
+        var response = await _client.GetRequest<Ship>(request, true);
 
-        if(response.IsSuccessful)
+        if(response is not null)
         {
-            _ship = response.Data.Data;
+            _ship = response.Data;
         }
         else
         {
-            Error = (!response.IsSuccessStatusCode ? response.StatusDescription : null) ?? response.ErrorMessage ?? response.ErrorException.Message;
+            Error = "Unable to retrieve ship, please make sure you are logged in";
         }
     }
 }
