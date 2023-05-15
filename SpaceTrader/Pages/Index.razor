@@ -66,13 +66,18 @@
         </tbody>
     </table>
 
-    @if(_dialogOpen)
+    @if(_retrieveAgentDialog)
     {
         <InputDialog Caption="@_title"
                        Message="@_message"
                        PlaceHolder="@_placeholder"
                        OnClose="@_onDialogComplete"/>
     }
+    @if(_registerAgentDialog)
+    {
+        <AgentRegistration OnClose="CreateNewAgent"/>
+    }
+
 }
 @code {
     private List<AgentData> _allAgents;
@@ -81,7 +86,8 @@
     private string Error = string.Empty;
 
     //Add Agent Dialog
-    private bool _dialogOpen = false;
+    private bool _retrieveAgentDialog = false;
+    private bool _registerAgentDialog = false;
     private string _title = string.Empty;
     private string _message = string.Empty;
     private string _placeholder = string.Empty;
@@ -92,19 +98,11 @@
         _allAgents = await _database.GetAll();
     }
 
-    private void AddNew()
-    {
-        _dialogOpen = true;
-        _title = "Create New Agent";
-        _message = "Enter the name you wish to use for the agent";
-        _placeholder = "Agent Name";
-        _onDialogComplete = CreateNewAgent;
-        ClearError();
-    }
+    private void AddNew() => _registerAgentDialog = true;
 
     private void AddExisting()
     {
-        _dialogOpen = true;
+        _retrieveAgentDialog = true;
         _title = "Retrieve Existing Agent";
         _message = "Enter your agent token.";
         _placeholder = "Agent Token";
@@ -114,7 +112,7 @@
 
     private async Task RetrieveAgent(string token)
     {
-        _dialogOpen = false;
+        _retrieveAgentDialog = false;
 
         if (string.IsNullOrWhiteSpace(token))
             return;
@@ -134,14 +132,15 @@
 
     private void ClearError() => Error = string.Empty;
 
-    private async Task CreateNewAgent(string name)
+    private async Task CreateNewAgent(AgentRegisterData agentData)
     {
-        _dialogOpen = false;
+        _registerAgentDialog = false;
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (agentData is null || string.IsNullOrWhiteSpace(agentData.AgentName))
             return;
 
-        var registration = await _client.RegisterNewAgent(name, "COSMIC");
+        var faction = string.IsNullOrWhiteSpace(agentData.FactionName) ? "COSMIC" : agentData.FactionName;
+        var registration = await _client.RegisterNewAgent(agentData.AgentName, faction);
         if(registration is not null)
         {
             var agent = AgentData.FromAPIObject(registration.Agent, registration.Token);
@@ -151,7 +150,7 @@
         }
         else
         {
-            Error = $"Unable to register agent {name}";
+            Error = $"Unable to register agent {agentData}";
         }
     }
 

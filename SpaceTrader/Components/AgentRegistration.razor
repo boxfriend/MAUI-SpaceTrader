@@ -1,0 +1,49 @@
+﻿<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agent Registration</h4>
+                <button type="button" class="close"
+                @onclick="@Cancel">
+                    &times;
+                </button>
+            </div>
+            <EditForm Model="@Agent" OnValidSubmit="Ok">
+                <DataAnnotationsValidator/>
+                <ValidationSummary/>
+                <div class="modal-body">
+                    <p>Enter your agent name and select a faction.</p>
+                    <input class="form-control" id="AgentName" @bind="@Agent.AgentName" type="text" placeholder="Agent Name" required="true"/>
+                    <InputSelect @bind-Value="@Agent.FactionName">
+                        <option value="">Select Faction . . .</option>
+                        <option value="COSMIC">COSMIC</option>
+                        <option value="VOID">VOID</option>
+                        <option value="GALACTIC">GALACTIC</option>
+                        <option value="QUANTUM">QUANTUM</option>
+                        <option value="DOMINION">DOMINION</option>
+                    </InputSelect>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="OK"/>
+
+                    <button type="button" class="btn btn-warning"
+                    @onclick="@Cancel">Cancel</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter] public EventCallback<AgentRegisterData> OnClose { get; set; }
+
+    private AgentRegisterData Agent = new();
+    private async Task Cancel ()
+    {
+        await OnClose.InvokeAsync(null);
+    }
+    private async Task Ok ()
+    {
+        await OnClose.InvokeAsync(Agent);
+    }
+}
+
