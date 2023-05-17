@@ -14,20 +14,22 @@
                 <div class="modal-body">
                     <p>Enter your agent name and select a faction.</p>
                     <input class="form-control" id="AgentName" @bind="@Agent.AgentName" type="text" placeholder="Agent Name" required="true"/>
-                    <InputSelect @bind-Value="@Agent.FactionName">
-                        <option value="">Select Faction . . .</option>
+                    <select class="form-select" @bind="@Agent.FactionName">
+                        <option selected>Select Faction . . .</option>
                         <option value="COSMIC">COSMIC</option>
                         <option value="VOID">VOID</option>
                         <option value="GALACTIC">GALACTIC</option>
                         <option value="QUANTUM">QUANTUM</option>
                         <option value="DOMINION">DOMINION</option>
-                    </InputSelect>
+                    </select>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary" value="OK"/>
-
-                    <button type="button" class="btn btn-warning"
-                    @onclick="@Cancel">Cancel</button>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">OK</button>
+                        <button type="button" class="btn btn-danger"
+                        @onclick=@Cancel>Cancel</button>
+                    </div>
+                    
                 </div>
             </EditForm>
         </div>
