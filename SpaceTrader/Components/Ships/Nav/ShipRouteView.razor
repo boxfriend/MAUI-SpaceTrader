@@ -1,0 +1,9 @@
+﻿<div>
+    <p>Destination: <NavWaypoint Waypoint=Route.Destination /></p>
+    <p>Departure: <NavWaypoint Waypoint=Route.Departure /></p>
+    <p>Leave Time: @Route.DepartureTime</p>
+    <p>Arrival Time: @Route.Arrival</p>
+</div>
+@code {
+    [Parameter] public ShipNavRoute Route { get; set; }
+}

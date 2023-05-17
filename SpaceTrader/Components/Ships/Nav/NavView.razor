@@ -1,0 +1,11 @@
+﻿<div>
+    <h4>Navigation</h4>
+    <b>System</b>: @Nav.SystemSymbol <b>Waypoint</b>: @Nav.WaypointSymbol
+    <div>
+        <ShipRouteView Route=Nav.Route />
+    </div>
+    Status: <b>@Nav.Status</b> Mode: <b>@Nav.FlightMode</b>
+</div>
+@code {
+    [Parameter] public ShipNav Nav { get; set; }
+}

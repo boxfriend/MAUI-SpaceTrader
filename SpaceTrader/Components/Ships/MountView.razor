@@ -1,0 +1,16 @@
+﻿<p>@Mount.Symbol</p>
+<p>@Mount.Name</p>
+<p>@Mount.Description</p>
+<p>@Mount.Strength</p>
+@if(Mount.Deposits is not null)
+{
+    @foreach(var deposit in Mount.Deposits)
+    {
+        <p>@deposit</p>
+    }
+}
+<RequirementsView Requirements=Mount.Requirements />
+
+@code {
+    [Parameter] public ShipMount Mount { get; set; }
+}

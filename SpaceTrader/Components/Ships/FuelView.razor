@@ -1,0 +1,7 @@
+﻿<h3>Fuel</h3>
+<p>@Fuel.Current / @Fuel.Capacity</p>
+
+<p>@Fuel.Consumed.Amount consumed at @Fuel.Consumed.Timestamp</p>
+@code {
+    [Parameter] public ShipFuel Fuel { get; set; }
+}

@@ -1,0 +1,14 @@
+﻿<h3>Cargo</h3>
+<p>@Cargo.Capacity</p>
+<p>@Cargo.Units</p>
+@if(Cargo.Inventory is not null)
+{
+    @foreach(var item in Cargo.Inventory)
+    {
+        <CargoItemView Item=@item />
+    }
+}
+
+@code {
+    [Parameter] public ShipCargo Cargo { get; set; }
+}

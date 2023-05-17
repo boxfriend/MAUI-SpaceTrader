@@ -1,0 +1,12 @@
+﻿<p>@Frame.Symbol</p>
+<p>@Frame.Name</p>
+<p>@Frame.Description</p>
+<p>@Frame.Condition</p>
+<p>@Frame.ModuleSlots</p>
+<p>@Frame.MountingPoints</p>
+<p>@Frame.FuelCapacity</p>
+<RequirementsView Requirements=Frame.Requirements />
+
+@code {
+    [Parameter] public ShipFrame Frame { get; set; }
+}
