@@ -9,40 +9,38 @@ internal class Response<T>
 
 internal record Meta(int Total, int Page, int Limit);
 
-internal abstract record ApiObject();
-
 internal record RegisterData(string Symbol, string Faction);
-internal record Registration(Agent Agent, Contract Contract, Faction Faction, Ship Ship, string Token) : ApiObject;
+internal record Registration(Agent Agent, Contract Contract, Faction Faction, Ship Ship, string Token);
 
 internal record Agent([property:JsonPropertyName("accountId")]string AccountID, [property: JsonPropertyName("symbol")] string Name, 
-    [property: JsonPropertyName("headquarters")] string Headquarters, [property: JsonPropertyName("credits")] int Credits) : ApiObject;
+    [property: JsonPropertyName("headquarters")] string Headquarters, [property: JsonPropertyName("credits")] int Credits);
 
 internal record Chart([property:JsonPropertyName("waypointSymbol")]string WayPointSymbol, [property: JsonPropertyName("submittedBy")] string SubmittedBy, 
-    [property: JsonPropertyName("submittedOn")] DateTime SubmittedOn) : ApiObject;
+    [property: JsonPropertyName("submittedOn")] DateTime SubmittedOn);
 
 internal record ConnectedSystem([property: JsonPropertyName("symbol")] string Name, [property: JsonPropertyName("sectorSymbol")] string SectorName, 
     [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("factionSymbol")] string FactionName,
-    [property: JsonPropertyName("x")] int X, [property: JsonPropertyName("y")] int Y, [property: JsonPropertyName("distance")] int Distance) : ApiObject;
+    [property: JsonPropertyName("x")] int X, [property: JsonPropertyName("y")] int Y, [property: JsonPropertyName("distance")] int Distance);
 
 internal record Contract([property: JsonPropertyName("id")] string ID, [property: JsonPropertyName("factionSymbol")] string Faction, 
     [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("terms")] ContractTerms Terms, [property: JsonPropertyName("accepted")] bool Accepted,
-    [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("expiration")] DateTime Expiration) : ApiObject;
+    [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("expiration")] DateTime Expiration);
 internal record ContractTerms([property: JsonPropertyName("deadline")] DateTime Deadline, [property: JsonPropertyName("payment")] ContractPayment Payment,
-    [property: JsonPropertyName("deliver")] ContractDeliverGood[] Deliveries) : ApiObject;
-internal record ContractPayment([property: JsonPropertyName("onAccepted")] int OnAccepted, [property: JsonPropertyName("onFulfilled")] int OnFulfilled) : ApiObject;
+    [property: JsonPropertyName("deliver")] ContractDeliverGood[] Deliveries);
+internal record ContractPayment([property: JsonPropertyName("onAccepted")] int OnAccepted, [property: JsonPropertyName("onFulfilled")] int OnFulfilled);
 internal record ContractDeliverGood([property: JsonPropertyName("tradeSymbol")] string Name, [property: JsonPropertyName("destinationSymbol")] string Destination,
-    [property: JsonPropertyName("unitsRequired")] int Required, [property: JsonPropertyName("unitsFulfilled")] int Fulfilled) : ApiObject;
+    [property: JsonPropertyName("unitsRequired")] int Required, [property: JsonPropertyName("unitsFulfilled")] int Fulfilled);
 
-internal record Cooldown(string Ship, int TotalLength, int RemainingLength, DateTime Expiration) : ApiObject;
-internal record Extraction(string Name, ExtractionYield Yield) : ApiObject;
-internal record ExtractionYield(string Name, int Units) : ApiObject;
+internal record Cooldown(string Ship, int TotalLength, int RemainingLength, DateTime Expiration);
+internal record Extraction(string Name, ExtractionYield Yield);
+internal record ExtractionYield(string Name, int Units);
 
-internal record Faction(string Symbol, string Name, string Description, string Headquarters, FactionTrait[] Traits) : ApiObject;
-internal record FactionTrait(string Type, string Name, string Description) : ApiObject;
-internal record JumpGate(int JumpRange, string Faction, ConnectedSystem[] ConnectedSystems) : ApiObject;
-internal record Market(string Symbol, TradeGood[] Exports, TradeGood[] Imports, TradeGood[] Exchange, MarketTransaction[] Transactions, MarketTradeGood[] TradeGoods) : ApiObject;
-internal record MarketTradeGood(string Symbol, int TradeVolume, string Supply, int PurchasePrice, int SellPrice) : ApiObject;
-internal record MarketTransaction(string Waypoint, string Ship, string Trade, string Type, int Units, int PricePerUnit, int TotalPrice, DateTime Timestamp) :  ApiObject;
+internal record Faction(string Symbol, string Name, string Description, string Headquarters, FactionTrait[] Traits);
+internal record FactionTrait(string Type, string Name, string Description);
+internal record JumpGate(int JumpRange, string Faction, ConnectedSystem[] ConnectedSystems);
+internal record Market(string Symbol, TradeGood[] Exports, TradeGood[] Imports, TradeGood[] Exchange, MarketTransaction[] Transactions, MarketTradeGood[] TradeGoods);
+internal record MarketTradeGood(string Symbol, int TradeVolume, string Supply, int PurchasePrice, int SellPrice);
+internal record MarketTransaction(string Waypoint, string Ship, string Trade, string Type, int Units, int PricePerUnit, int TotalPrice, DateTime Timestamp);
 internal record ScannedShip(string Symbol, ShipRegistration Registration, ShipNav Nav, ShipFrame Frame, ShipReactor Reactor, ShipEngine Engine, ShipMount[] Mounts);
 internal record ScannedSystem(string Symbol, string SectorSymbol, string Type, int X, int Y, int Distance);
 internal record ScannedWaypoint(string Symbol, string Type, string SystemSymbol, int X, int Y, WaypointOrbital[] Orbitals, WaypointFaction Faction, WaypointTrait[] Traits, Chart Chart);
