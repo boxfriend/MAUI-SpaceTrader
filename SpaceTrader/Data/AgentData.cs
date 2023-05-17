@@ -9,7 +9,7 @@ public class AgentData
     [Unique] public string Token { get; set; }
     public int Credits { get; set; }
 
-    internal static AgentData FromAPIObject(Agent data, string token)
+    internal static AgentData FromAPIAgent(Agent data, string token)
     {
         return new AgentData()
         {

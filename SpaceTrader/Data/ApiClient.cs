@@ -34,7 +34,7 @@ internal class ApiClient
             Authenticator = new JwtAuthenticator(token)
         };
         var response = await GetRequest<Agent>(request);
-        return response is not null ? AgentData.FromAPIObject(response.Data, token) : null;
+        return response is not null ? AgentData.FromAPIAgent(response.Data, token) : null;
     }
 
     public async Task<Response<T>> GetRequest<T>(RestRequest request, bool authenticate = false)
