@@ -1,7 +1,18 @@
 ﻿<h3>Fuel</h3>
-<p>@Fuel.Current / @Fuel.Capacity</p>
-
+<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
+    <div class="progress-bar progress-bar-striped progress-bar-animated @BarColor() overflow-visible" style="width: @(FuelPercentage())%">@Fuel.Current / @Fuel.Capacity</div>
+</div>
 <p>@Fuel.Consumed.Amount consumed at @Fuel.Consumed.Timestamp</p>
 @code {
     [Parameter] public ShipFuel Fuel { get; set; }
+
+    private float FuelPercentage() => 25;//Fuel.Current / (float)Fuel.Capacity * 100;
+
+    private string BarColor() => FuelPercentage() switch
+    {
+        >= 75 => "bg-success",
+        >= 50 => "bg-info",
+        >= 25 => "bg-warning",
+        _ => "bg-danger",
+    };
 }
