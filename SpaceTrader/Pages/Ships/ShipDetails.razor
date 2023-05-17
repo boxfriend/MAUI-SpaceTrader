@@ -1,11 +1,12 @@
 ﻿@page "/shipdetails/{symbol}"
+@using SpaceTrader.Components.Ships
+@using SpaceTrader.Components.Ships.Nav
 @inject ApiClient _client
-<h3>ShipDetails</h3>
 @if(_ship == null)
 {
     if(string.IsNullOrWhiteSpace(Error))
     {
-        <p>Loading . . .</p>
+        <p>Loading Ship Details . . .</p>
     }
     else
     {
@@ -15,7 +16,37 @@
 else
 {
     <h3>@_ship.Symbol</h3>
-    <p>ToDo: Finish this page</p>
+    <div>
+        <RegistrationView Registration=_ship.Registration />
+        <NavView Nav=_ship.Nav />
+        <CrewView Crew=_ship.Crew />
+        <ShipFrameView Frame=_ship.Frame />
+        <ReactorView Reactor=_ship.Reactor />
+        <EngineView Engine=_ship.Engine />
+    </div>
+    @if (_ship.Modules is not null)
+    {
+        <div>
+            @foreach (var module in _ship.Modules)
+            {
+                <ModuleView Module=module />
+            }
+        </div>
+    }
+    @if(_ship.Mounts is not null)
+    {
+        <div>
+            @foreach (var mount in _ship.Mounts)
+            {
+                <MountView Mount=mount />
+            }
+        </div>
+    }
+    
+    <div>
+        <CargoView Cargo=_ship.Cargo />
+        <FuelView Fuel=_ship.Fuel />
+    </div>
 }
 
 @code {
