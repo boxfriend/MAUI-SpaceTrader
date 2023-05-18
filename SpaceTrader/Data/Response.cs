@@ -20,6 +20,7 @@ public record FactionTrait (string Type, string Name, string Description);
 #endregion
 
 #region Contracts
+public record ContractAccept(Agent Agent, Contract Contract);
 public record Contract([property: JsonPropertyName("id")] string ID, [property: JsonPropertyName("factionSymbol")] string Faction, 
     [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("terms")] ContractTerms Terms, [property: JsonPropertyName("accepted")] bool Accepted,
     [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("expiration")] DateTime Expiration);
