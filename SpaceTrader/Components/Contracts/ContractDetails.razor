@@ -1,0 +1,56 @@
+﻿@inject ApiClient _client
+<div>
+    @if(!string.IsNullOrWhiteSpace(_error))
+    {
+        <p style="color: red">@_error</p>
+    }
+    <p>@Contract.ID - @Contract.Faction</p>
+    <p>
+        @if(!Contract.Accepted)
+        {
+            <button type="button" class="btn btn-primary"
+            @onclick="AcceptContract" disabled="@(!string.IsNullOrEmpty(_error))">Accept</button>
+
+        }
+        else
+        {
+            <span>Fullfilled: @Contract.Fulfilled</span>
+        }
+        @if(!Contract.Fulfilled)
+        {
+            <br />
+            <span>Expiration: @Contract.Expiration</span>
+        }
+    </p>
+</div>
+<div>
+    Deadline: @Contract.Terms.Deadline
+    <span>Up front: @Contract.Terms.Payment.OnAccepted On Complete: @Contract.Terms.Payment.OnFulfilled</span>
+    @if(Contract.Terms.Deliveries is not null)
+    {
+        <div>
+            @foreach(var delivery in Contract.Terms.Deliveries)
+            {
+                <span>Deliver @delivery.Fulfilled @delivery.Name to @delivery.Destination : Delivered @delivery.Fulfilled</span>
+            }
+        </div>
+    }
+</div>
+@code {
+    [Parameter] public Contract Contract { get; set; }
+    private string _error = string.Empty;
+
+    private async Task AcceptContract ()
+    {
+        var request = new RestRequest($"my/contracts/{Contract.ID}/accept", Method.Post);
+        var response = await _client.PostRequest<ContractAccept>(request, true);
+
+        if(response is not null)
+        {
+            Contract = response.Data.Contract;
+        } else
+        {
+            _error = "Unable to accept contract";
+        }
+    }
+}
