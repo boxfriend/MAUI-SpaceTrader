@@ -1,0 +1,93 @@
+﻿@page "/contracts"
+@using SpaceTrader.Components.Contracts
+@inject ApiClient _client
+<h3>Contracts</h3>
+@if(_contracts is not null && _contracts.Count() > 0)
+{
+    <ContractList Contracts="@_contracts" OnDetails="@LoadContract"/>
+}
+else if(string.IsNullOrEmpty(_error))
+{
+    <p>Nothing to show for now . . .</p>
+}
+else
+{
+    <p style="color:red">@_error</p>
+}
+
+@if(_toShow is not null)
+{
+    <div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Contract Details</h4>
+                    <button type="button" class="close"
+                    @onclick="@CloseDetails">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body"><ContractDetails Contract="@_toShow" /></div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<Contract> _contracts = null;
+    private const int limit = 20;
+    private int page = 1;
+    private int total = 0;
+    private string _error = string.Empty;
+
+    private Contract _toShow = null;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest("my/contracts", Method.Get);
+        //request.AddJsonBody(new { limit, page });
+        request.AddParameter("limit", limit);
+        request.AddParameter("page", page);
+
+        var response = await _client.GetRequest<Contract[]>(request, true);
+        if(response is not null)
+        {
+            page = response.Meta.Page;
+            total = response.Meta.Total;
+
+            _contracts = response.Data;
+            SortContracts();
+        } else
+        {
+            _error = "Unable to load contracts";
+        }
+    }
+
+    private async Task LoadContract(string contract)
+    {
+        var request = new RestRequest($"my/contracts/{contract}", Method.Get);
+        var response = await _client.GetRequest<Contract>(request, true);
+        if (response is not null)
+        {
+            _toShow = response.Data;
+        } else
+        {
+            _error = $"Unable to load contract {contract}";
+        }
+    }
+
+    private void CloseDetails()
+    {
+        if (_toShow is null) { return; }
+
+        if(_toShow.Accepted)
+        {
+            var newOne = _toShow;
+            _contracts = _contracts.Where(x => x.ID != newOne.ID).Append(newOne);
+            SortContracts();
+        }
+        _toShow = null;
+    }
+
+    private void SortContracts() => _contracts = _contracts.OrderByDescending(x => x.Accepted).ThenBy(x => x.Accepted ? x.Terms.Deadline : x.Expiration);
+}
