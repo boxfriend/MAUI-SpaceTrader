@@ -9,7 +9,7 @@
 @code {
     [Parameter] public ShipFuel Fuel { get; set; }
 
-    private float FuelPercentage() => 25;//Fuel.Current / (float)Fuel.Capacity * 100;
+    private float FuelPercentage() => Fuel.Current / (float)Fuel.Capacity * 100;
 
     private string BarColor() => FuelPercentage() switch
     {
