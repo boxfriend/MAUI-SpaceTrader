@@ -1,0 +1,42 @@
+﻿@if(Contracts is not null && Contracts.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ID</th>
+                <th>Faction</th>
+                <th>Type</th>
+                <th>Deadline</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ 
+                var count = 1;
+                foreach(var contract in Contracts)
+                {
+                    <tr>
+                        <td>@(count++)</td>
+                        <td>@contract.ID</td>
+                        <td>@contract.Faction</td>
+                        <td>@contract.Type</td>
+                        <td>@(contract.Accepted ? contract.Terms.Deadline : "???")</td>
+                        <td>
+                            <button type="button" @onclick="(async () => await OnDetails.InvokeAsync(contract.ID))">Details</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nothing to show.</p>
+}
+
+@code {
+    [Parameter] public IEnumerable<Contract> Contracts { get; set; }
+    [Parameter] public EventCallback<string> OnDetails { get; set; }
+}
