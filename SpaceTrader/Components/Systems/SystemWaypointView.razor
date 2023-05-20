@@ -1,0 +1,8 @@
+﻿<div>
+    @Waypoint.Symbol (@Waypoint.X, @Waypoint.Y) - @Waypoint.Type <button class="btn btn-secondary">Details</button>
+</div>
+
+@code {
+    [Parameter] public SystemWaypoint Waypoint { get; set; }
+    [Parameter] public EventCallback<string> OnDetails { get; set; }
+}

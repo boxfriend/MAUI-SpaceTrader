@@ -1,0 +1,30 @@
+﻿<div>
+    <h3>@System.Symbol</h3><span> - @System.SectorSymbol (@System.X, @System.Y)</span>
+    <span>@System.Type</span>
+
+    @if(System.Waypoints is not null && System.Waypoints.Length > 0)
+    {
+        <button class="btn btn-info" data-toggle="collapse" data-target="waypoints">Waypoints</button>
+        <div class="collapse" id="waypoints">
+            @foreach(var waypoint in System.Waypoints)
+            {
+                <SystemWaypointView Waypoint="@waypoint" />
+            }
+        </div>
+    }
+
+    @if (System.Factions is not null && System.Factions.Length > 0)
+    {
+        <button class="btn btn-info" data-toggle="collapse" data-target="factions">Waypoints</button>
+        <div class="collapse" id="factions">
+            @foreach (var faction in System.Factions)
+            {
+                @faction.Symbol
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public System System { get; set; }
+}
