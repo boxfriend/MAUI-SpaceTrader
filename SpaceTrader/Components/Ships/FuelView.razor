@@ -1,5 +1,4 @@
-﻿<h3>Fuel</h3>
-<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
+﻿<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
     <div class="progress-bar progress-bar-striped progress-bar-animated @(BarColor()) overflow-visible" style="width: @(FuelPercentage())%">@Fuel.Current / @Fuel.Capacity</div>
 </div>
 @if(Fuel.Consumed.Amount > 0)
