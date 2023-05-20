@@ -19,14 +19,14 @@ else
     <div>
         <div id="accordion">
             <div class="card">
-                <div class="card-header" id="registrationheader">
+                <div class="card-header" id="registrationHeader">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="true" aria-controls="registration">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="false" aria-controls="registration">
                             Registration
                         </button>
                     </h5>
                 </div>
-                <div id="registration" class="collapse multi-collapse" aria-labelledby="registrationheader" data-parent="#accordion">
+                <div id="registration" class="collapse multi-collapse" aria-labelledby="registrationHeader" data-parent="#accordion">
                     <div class="card-body">
                         <RegistrationView Registration=_ship.Registration />
                     </div>
@@ -34,49 +34,108 @@ else
             </div>
 
             <div class="card">
-                <div class="card-header" id="navigationheader">
+                <div class="card-header" id="navigationHeader">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-expanded="false" aria-controls="nav">
                             Navigation
                         </button>
                     </h5>
                 </div>
-                <div id="collapseTwo" class="collapse multi-collapse" aria-labelledby="navigationheader" data-parent="#accordion">
+                <div id="nav" class="collapse multi-collapse" aria-labelledby="navigationHeader" data-parent="#accordion">
                     <div class="card-body">
                         <NavView Nav=_ship.Nav />
                         <FuelView Fuel=_ship.Fuel />
                     </div>
                 </div>
             </div>
-        </div>
-            <CrewView Crew=_ship.Crew />
-            <ShipFrameView Frame=_ship.Frame />
-            <ReactorView Reactor=_ship.Reactor />
-            <EngineView Engine=_ship.Engine />
-        </div>
-        @if (_ship.Modules is not null)
-        {
-            <div class="collapse" id="modules">
-                @foreach (var module in _ship.Modules)
-                {
-                    <ModuleView Module=module />
-                }
-            </div>
-        }
-        @if(_ship.Mounts is not null)
-        {
-            <div class="collapse" id="mounts">
-                @foreach (var mount in _ship.Mounts)
-                {
-                    <MountView Mount=mount />
-                }
-            </div>
-        }
-    
-        <div>
-            <CargoView Cargo=_ship.Cargo />
-        </div>
 
+            <div class="card">
+                <div class="card-header" id="crewHeader">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#crew" aria-expanded="false" aria-controls="crew">
+                            Crew
+                        </button>
+                    </h5>
+                </div>
+                <div id="crew" class="collapse multi-collapse" aria-labelledby="navigationheader" data-parent="#accordion">
+                    <div class="card-body">
+                        <CrewView Crew=_ship.Crew />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="configurationHeader">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#config" aria-expanded="false" aria-controls="config">
+                            Ship Configuration
+                        </button>
+                    </h5>
+                </div>
+                <div id="config" class="collapse multi-collapse" aria-labelledby="configurationHeader" data-parent="#accordion">
+                    <div class="card-body">
+                        <ShipFrameView Frame=_ship.Frame />
+                        <ReactorView Reactor=_ship.Reactor />
+                        <EngineView Engine=_ship.Engine />
+                    </div>
+                </div>
+            </div>
+            
+            @if (_ship.Modules is not null)
+            {
+                <div class="card">
+                    <div class="card-header" id="moduleHeader">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#modules" aria-expanded="false" aria-controls="modules">
+                                Modules
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="modules" class="collapse multi-collapse" aria-labelledby="moduleHeader" data-parent="#accordion">
+                        <div class="card-body">
+                            @foreach (var module in _ship.Modules)
+                            {
+                                <ModuleView Module=module />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            @if(_ship.Mounts is not null)
+            {
+                <div class="card">
+                    <div class="card-header" id="mountsHeader">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#mounts" aria-expanded="false" aria-controls="mounts">
+                                Mounts
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="mounts" class="collapse multi-collapse" aria-labelledby="mountsHeader" data-parent="#accordion">
+                        <div class="card-body">
+                            @foreach (var mount in _ship.Mounts)
+                            {
+                                <MountView Mount=mount />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header" id="cargoHeader">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#cargo" aria-expanded="false" aria-controls="cargo">
+                            Cargo
+                        </button>
+                    </h5>
+                </div>
+                <div id="cargo" class="collapse multi-collapse" aria-labelledby="cargoHeader" data-parent="#accordion">
+                    <CargoView Cargo=_ship.Cargo />
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
