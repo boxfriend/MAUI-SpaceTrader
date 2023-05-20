@@ -23,7 +23,7 @@ public record FactionTrait (string Type, string Name, string Description);
 public record ContractAccept(Agent Agent, Contract Contract);
 public record Contract([property: JsonPropertyName("id")] string ID, [property: JsonPropertyName("factionSymbol")] string Faction, 
     [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("terms")] ContractTerms Terms, [property: JsonPropertyName("accepted")] bool Accepted,
-    [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("expiration")] DateTime Expiration);
+    [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("deadlineToAccept")] DateTime Expiration);
 public record ContractTerms([property: JsonPropertyName("deadline")] DateTime Deadline, [property: JsonPropertyName("payment")] ContractPayment Payment,
     [property: JsonPropertyName("deliver")] ContractDeliverGood[] Deliveries);
 public record ContractPayment([property: JsonPropertyName("onAccepted")] int OnAccepted, [property: JsonPropertyName("onFulfilled")] int OnFulfilled);
