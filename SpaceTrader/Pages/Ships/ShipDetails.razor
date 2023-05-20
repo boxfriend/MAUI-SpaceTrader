@@ -17,36 +17,66 @@ else
 {
     <h3>@_ship.Symbol</h3>
     <div>
-        <RegistrationView Registration=_ship.Registration />
-        <NavView Nav=_ship.Nav />
-        <CrewView Crew=_ship.Crew />
-        <ShipFrameView Frame=_ship.Frame />
-        <ReactorView Reactor=_ship.Reactor />
-        <EngineView Engine=_ship.Engine />
-    </div>
-    @if (_ship.Modules is not null)
-    {
-        <div>
-            @foreach (var module in _ship.Modules)
-            {
-                <ModuleView Module=module />
-            }
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="registrationheader">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="true" aria-controls="registration">
+                            Registration
+                        </button>
+                    </h5>
+                </div>
+                <div id="registration" class="collapse multi-collapse" aria-labelledby="registrationheader" data-parent="#accordion">
+                    <div class="card-body">
+                        <RegistrationView Registration=_ship.Registration />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="navigationheader">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            Navigation
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse multi-collapse" aria-labelledby="navigationheader" data-parent="#accordion">
+                    <div class="card-body">
+                        <NavView Nav=_ship.Nav />
+                        <FuelView Fuel=_ship.Fuel />
+                    </div>
+                </div>
+            </div>
         </div>
-    }
-    @if(_ship.Mounts is not null)
-    {
-        <div>
-            @foreach (var mount in _ship.Mounts)
-            {
-                <MountView Mount=mount />
-            }
+            <CrewView Crew=_ship.Crew />
+            <ShipFrameView Frame=_ship.Frame />
+            <ReactorView Reactor=_ship.Reactor />
+            <EngineView Engine=_ship.Engine />
         </div>
-    }
+        @if (_ship.Modules is not null)
+        {
+            <div class="collapse" id="modules">
+                @foreach (var module in _ship.Modules)
+                {
+                    <ModuleView Module=module />
+                }
+            </div>
+        }
+        @if(_ship.Mounts is not null)
+        {
+            <div class="collapse" id="mounts">
+                @foreach (var mount in _ship.Mounts)
+                {
+                    <MountView Mount=mount />
+                }
+            </div>
+        }
     
-    <div>
-        <CargoView Cargo=_ship.Cargo />
-        <FuelView Fuel=_ship.Fuel />
-    </div>
+        <div>
+            <CargoView Cargo=_ship.Cargo />
+        </div>
+
 }
 
 @code {
