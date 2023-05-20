@@ -64,7 +64,7 @@ else
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="configuration">
                 <div class="card-header" id="configurationHeader">
                     <h5 class="mb-0">
                         <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#config" aria-expanded="false" aria-controls="config">
@@ -74,9 +74,51 @@ else
                 </div>
                 <div id="config" class="collapse multi-collapse" aria-labelledby="configurationHeader" data-parent="#accordion">
                     <div class="card-body">
-                        <ShipFrameView Frame=_ship.Frame />
-                        <ReactorView Reactor=_ship.Reactor />
-                        <EngineView Engine=_ship.Engine />
+
+                        <div class="card">
+                            <div class="card-header" id="frameHeader">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#frame" aria-expanded="false" aria-controls="frame">
+                                        Frame
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="frame" class="collapse multi-collapse" aria-labelledby="frameHeader" data-parent="#configuration">
+                                <div class="card-body">
+                                    <ShipFrameView Frame=_ship.Frame />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="reactorHeader">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#reactor" aria-expanded="false" aria-controls="reactor">
+                                        Reactor
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="reactor" class="collapse multi-collapse" aria-labelledby="reactorHeader" data-parent="#configuration">
+                                <div class="card-body">
+                                    <ReactorView Reactor=_ship.Reactor />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" id="engineHeader">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#engine" aria-expanded="false" aria-controls="engine">
+                                        Engine
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="engine" class="collapse multi-collapse" aria-labelledby="engineHeader" data-parent="#configuration">
+                                <div class="card-body">
+                                    <EngineView Engine=_ship.Engine />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
