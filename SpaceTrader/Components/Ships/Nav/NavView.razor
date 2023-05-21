@@ -1,10 +1,26 @@
-﻿<div>
+﻿@inject ApiClient _client
+<div>
     <b>System</b>: @Nav.SystemSymbol <b>Waypoint</b>: @Nav.WaypointSymbol <button class="btn btn-info">Details</button>
-    <div>
-        <ShipRouteView Route=Nav.Route />
-    </div>
-    Status: <b>@Nav.Status</b> Mode: <b>@Nav.FlightMode</b>
+    @if(Nav.Route is not null)
+    {    
+        <div>
+            <ShipRouteView Route=Nav.Route />
+        </div>
+    }
+    Status: <b>@Nav.Status</b> <button class="btn btn-info" disabled="@(Nav.Status == "IN_TRANSIT")" @onclick="@ToggleDock">@(Nav.Status == "DOCKED" ? "To Orbit" : "Dock")</button> Mode: <b>@Nav.FlightMode</b>
 </div>
 @code {
     [Parameter] public ShipNav Nav { get; set; }
+    [Parameter] public string Symbol { get; set; }
+
+    private async Task ToggleDock()
+    {
+        var request = new RestRequest($"my/ships/{Symbol}/{(Nav.Status == "DOCKED" ? "orbit" : "dock")}", Method.Post);
+        var response = await _client.PostRequest<ToggleDock>(request, true);
+
+        if(response is not null)
+        {
+            Nav = response.Data.Nav;
+        }
+    }
 }
