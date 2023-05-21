@@ -147,9 +147,24 @@ else
                 </div>
                 <div id="mounts" class="accordion-collapse collapse" aria-labelledby="mountsHeader" data-parent="#topAccordion">
                     <div class="accordion-body">
+                        @{var count = 0;}
                         @foreach (var mount in _ship.Mounts)
                         {
-                            <MountView Mount=mount />
+                            <div class="accordion" id="moduleAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="mountHeader">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mount@(count)" aria-expanded="false" aria-controls="mount@(count)">
+                                            @mount.Name
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="mount@(count)" class="accordion-collapse collapse" aria-labelledby="mountHeader" data-parent="#mountsAccordion">
+                                    <div class="accordion-body">
+                                        <MountView Mount=mount />
+                                    </div>
+                                </div>
+                            </div>
+                            count++;
                         }
                     </div>
                 </div>
