@@ -1,12 +1,11 @@
-﻿<p>@Mount.Symbol</p>
-<p>@Mount.Name</p>
-<p>@Mount.Description</p>
-<p>@Mount.Strength</p>
+﻿<h3>@Mount.Name</h3>
+<span class="text-muted">@Mount.Description</span>
+<p><strong>Strength:</strong> @Mount.Strength</p>
 @if(Mount.Deposits is not null)
 {
     @foreach(var deposit in Mount.Deposits)
     {
-        <p>@deposit</p>
+        <span class="badge bg-light text-dark">@deposit</span>
     }
 }
 <RequirementsView Requirements=Mount.Requirements />
