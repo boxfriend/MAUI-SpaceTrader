@@ -16,20 +16,8 @@
 }
 else
 {
-    <h3>@_ship.Symbol</h3>
+    <h3><RegistrationView Registration=_ship.Registration /></h3>
     <div class="accordion accordion-flush" id="topAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="registrationHeader">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="false" aria-controls="registration">
-                    Ship Registration
-                </button>
-            </h2>
-        </div>
-        <div id="registration" class="accordion-collapse collapse" aria-labelledby="registrationHeader" data-parent="#topAccordion">
-            <div class="accordion-body">
-                <RegistrationView Registration=_ship.Registration />
-            </div>
-        </div>
 
         <div class="accordion-item">
             <h2 class="accordion-header" id="navigationHeader">
