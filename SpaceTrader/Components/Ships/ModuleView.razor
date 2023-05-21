@@ -1,8 +1,18 @@
-﻿<p>@Module.Symbol</p>
-<p>@Module.Name</p>
-<p>@Module.Description</p>
-<p>@Module.Capacity</p>
-<p>@Module.Range</p>
+﻿<h3>@Module.Name</h3>
+<span class="text-muted">@Module.Description</span>
+
+<table class="table table-borderless">
+    <thead>
+        <th>Capacity</th>
+        <th>Range</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Module.Capacity</td>
+            <td>@Module.Range</td>
+        </tr>
+    </tbody>
+</table>
 <RequirementsView Requirements=Module.Requirements />
 
 @code {
