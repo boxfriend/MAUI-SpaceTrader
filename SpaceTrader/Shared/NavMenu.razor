@@ -13,31 +13,28 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="text-light">
-            <span>$@(agent is not null ? agent.Credits : "???")</span>
-            <span>HQ: @(agent?.Headquarters ?? "???")</span><br/>
-            <span>ID: @(agent?.AccountID ?? "???")</span>
+        <div class="text-light" style="text-align:center">
+            <div>$@(agent is not null ? agent.Credits : "???")</div>
+            <div>HQ: @(agent?.Headquarters ?? "???")</div>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="myagent">
-                <span class="oi oi-plus" aria-hidden="true"></span> MyAgent
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="shipslist">
-                <span class="oi oi-plus" aria-hidden="true"></span> MyShips
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="contracts">
-                <span class="oi oi-plus" aria-hidden="true"></span> Contracts
-            </NavLink>
-        </div>
+        @if(agent is not null)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="shipslist">
+                    <span class="oi oi-plus" aria-hidden="true"></span> MyShips
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="contracts">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Contracts
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
