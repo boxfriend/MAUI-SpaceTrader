@@ -30,14 +30,14 @@
         </button>
     </p>
 
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Credits</th>
-                <th>Account ID</th>
-                <th></th>
+                <th scope="col">#</th>
+                <th scope ="col">Name</th>
+                <th scope="col">Credits</th>
+                <th scope="col">Account ID</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -46,14 +46,14 @@
                 var count = 1;
                 foreach (var agent in _allAgents)
                 {
-                    <tr>
-                        <td>@count</td>
+                    <tr class="align-middle">
+                        <td scope ="row">@count</td>
                         <td>@agent.Name</td>
                         <td>@agent.Credits</td>
                         <td>@agent.AccountID</td>
                         <td>
                             <button class="btn btn-primary" disabled="@_client.IsLoggedInAgent(agent)"
-                            @onclick="(() => _client.Login(agent))">
+                            @onclick="(async () => await LoginAgent(agent))">
                                 Login
                             </button>
                             <button class="btn btn-danger"
@@ -170,5 +170,23 @@
     private void ViewDetails(AgentData agent)
     {
         _navManager.NavigateTo($"agentdetails/{agent.AccountID}");
+    }
+
+    private async Task LoginAgent(AgentData agent)
+    {
+        _client.Login(agent);
+
+        var request = new RestRequest("/my/agent");
+        var response = await _client.GetRequest<Agent>(request, true);
+
+        if (response is not null)
+        {
+            var myAgent = response.Data;
+            await _database.Update(myAgent);
+            return;
+        } else
+        {
+            Error = "Unable to sign in. Please ensure you have a valid internet connection and a valid API token.";
+        }
     }
 }
