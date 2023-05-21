@@ -39,5 +39,14 @@ internal class AgentDbController
         return data;
     }
 
+    public async Task Update(string accountID, int credits)
+    {
+        var agent = await Get(accountID);
+        agent.Credits = credits;
+        await _connection.UpdateAsync(agent);
+    }
+
+    public async Task Update(Agent agent) => await Update(agent.AccountID, agent.Credits);
+
     public async Task Delete (AgentData data) => await _connection.DeleteAsync(data);
 }
