@@ -1,11 +1,27 @@
-﻿<p>@Cargo.Capacity</p>
-<p>@Cargo.Units</p>
+﻿<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Cargo.Units" aria-valuemin="0" aria-valuemax="@Cargo.Capacity">
+    <div class="progress-bar progress-bar-striped bg-info overflow-visible" style="width: @((Cargo.Units / (float)Cargo.Capacity))%">@Cargo.Units / @Cargo.Capacity</div>
+</div>
 @if(Cargo.Inventory is not null)
 {
-    @foreach(var item in Cargo.Inventory)
-    {
-        <CargoItemView Item=@item />
-    }
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Count</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Cargo.Inventory)
+            {
+                <tr>
+                    <td scope="row">@item.Name</td>
+                    <td>@item.Units</td>
+                    <td>@item.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
