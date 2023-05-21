@@ -1,4 +1,6 @@
-﻿using SQLite;
+﻿using Android.Accounts;
+using Android.Icu.Text;
+using SQLite;
 
 namespace SpaceTrader.Data;
 internal class AgentDbController
@@ -39,14 +41,12 @@ internal class AgentDbController
         return data;
     }
 
-    public async Task Update(string accountID, int credits)
+    public async Task Update (Agent agent)
     {
-        var agent = await Get(accountID);
-        agent.Credits = credits;
-        await _connection.UpdateAsync(agent);
+        var agentData = await Get(agent.AccountID);
+        agentData = AgentData.FromAPIAgent(agent, agentData.Token);
+        await _connection.UpdateAsync(agentData);
     }
-
-    public async Task Update(Agent agent) => await Update(agent.AccountID, agent.Credits);
 
     public async Task Delete (AgentData data) => await _connection.DeleteAsync(data);
 }
