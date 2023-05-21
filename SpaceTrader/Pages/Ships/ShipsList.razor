@@ -17,8 +17,8 @@
         <thead>
             <tr>
                 <th width="10%">#</th>
-                <th width="30%">Symbol</th>
                 <th width="30%">Name</th>
+                <th width="30%">Role</th>
                 <th width="20%">Fuel</th>
                 <th width="10%"></th>
             </tr>
@@ -26,13 +26,13 @@
         <tbody>
 
             @{
-                var count = (_currentPage - 1) * _limit;
+                var count = ((_currentPage - 1) * _limit) + 1;
                 foreach (var ship in _ships)
                 {
                     <tr>
                         <td>@count</td>
-                        <td>@ship.Symbol</td>
                         <td>@ship.Registration.Name</td>
+                        <td>@ship.Registration.Role</td>
                         <td>@ship.Fuel.Current / @ship.Fuel.Capacity</td>
                         <td>
                             <button type="button" class="btn btn-info"
