@@ -10,7 +10,7 @@ internal class ApiClient
     private readonly RestClient _client;
     private readonly ILogger<ApiClient> _logger;
 
-    private AgentData _loggedInAgent = null;
+    public AgentData LoggedInAgent { get; private set; }
     private JwtAuthenticator _authenticator = null;
 
     public ApiClient(ILogger<ApiClient> logger)
@@ -21,9 +21,9 @@ internal class ApiClient
         _logger = logger;
     }
 
-    public string DisplayName => _loggedInAgent?.Name ?? "SpaceTraders";
+    public string DisplayName => LoggedInAgent?.Name ?? "SpaceTraders";
 
-    public bool IsLoggedInAgent(AgentData agent) => _loggedInAgent is not null && _loggedInAgent.AccountID == agent.AccountID;
+    public bool IsLoggedInAgent(AgentData agent) => LoggedInAgent is not null && LoggedInAgent.AccountID == agent.AccountID;
     public async Task<AgentData> RetrieveAgent (string token)
     {
         if (string.IsNullOrWhiteSpace(token))
@@ -100,7 +100,7 @@ internal class ApiClient
 
     public void Login(AgentData agent)
     {
-        _loggedInAgent = agent;
+        LoggedInAgent = agent;
         _authenticator = new(agent?.Token ?? "INVALID");
     }
 }
