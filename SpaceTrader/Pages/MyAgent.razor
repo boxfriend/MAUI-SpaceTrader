@@ -3,16 +3,17 @@
 @inject ApiClient _client
 
 <h1>My Agent</h1>
+@if(!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>   
+}
+
 @if(_myAgent == null)
 {
-    if(string.IsNullOrWhiteSpace(Error))
-    {
-        <p>Loading . . .</p>
-    }
-    else
-    {
-        <p style="color:red">@Error</p>
-    }
+    <p>Loading . . .</p>
 }
 else
 {

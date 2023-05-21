@@ -2,16 +2,17 @@
 @using SpaceTrader.Components.Ships
 @using SpaceTrader.Components.Ships.Nav
 @inject ApiClient _client
+
+@if(!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>   
+}
 @if(_ship == null)
 {
-    if(string.IsNullOrWhiteSpace(Error))
-    {
-        <p>Loading Ship Details . . .</p>
-    }
-    else
-    {
-        <p style="color:red">@Error</p>
-    }
+    <p>Loading Ship Details . . .</p>
 }
 else
 {

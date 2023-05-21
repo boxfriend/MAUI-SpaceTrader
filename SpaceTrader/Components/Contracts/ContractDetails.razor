@@ -1,15 +1,18 @@
 ﻿@inject ApiClient _client
 <div>
-    @if(!string.IsNullOrWhiteSpace(_error))
+    @if (!string.IsNullOrWhiteSpace(Error))
     {
-        <p style="color: red">@_error</p>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error: </strong>@Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
     <p>@Contract.ID - @Contract.Faction</p>
     <p>
         @if(!Contract.Accepted)
         {
             <button type="button" class="btn btn-primary"
-            @onclick="AcceptContract" disabled="@(!string.IsNullOrEmpty(_error))">Accept</button>
+            @onclick="AcceptContract" disabled="@(!string.IsNullOrEmpty(Error))">Accept</button>
 
         }
         else
@@ -38,7 +41,7 @@
 </div>
 @code {
     [Parameter] public Contract Contract { get; set; }
-    private string _error = string.Empty;
+    private string Error = string.Empty;
 
     private async Task AcceptContract ()
     {
@@ -50,7 +53,7 @@
             Contract = response.Data.Contract;
         } else
         {
-            _error = "Unable to accept contract";
+            Error = "Unable to accept contract";
         }
     }
 }

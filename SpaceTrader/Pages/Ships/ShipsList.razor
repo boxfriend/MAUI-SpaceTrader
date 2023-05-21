@@ -2,7 +2,14 @@
 @inject ApiClient _client
 @inject NavigationManager _navManager
 <h3>Agent Ships</h3>
-<p style="color:red">@Error</p>
+
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 @if (_ships != null)
 {

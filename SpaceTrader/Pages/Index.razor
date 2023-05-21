@@ -6,7 +6,13 @@
 @inject NavigationManager _navManager
 
 <h1>Agents</h1>
-<p style="color:red">@Error</p>
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 @if (_allAgents == null)
 {
     <p><em>Loading...</em></p>
