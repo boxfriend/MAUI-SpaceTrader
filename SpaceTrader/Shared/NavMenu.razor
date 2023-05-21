@@ -1,15 +1,23 @@
-﻿@inject ApiClient client
+﻿@implements IDisposable
+@inject ApiClient client
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">@client.DisplayName</a>
+        
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
     </div>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
+        <div class="text-light">
+            <span>$@(agent is not null ? agent.Credits : "???")</span>
+            <span>HQ: @(agent?.Headquarters ?? "???")</span><br/>
+            <span>ID: @(agent?.AccountID ?? "???")</span>
+        </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
@@ -38,8 +46,28 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private AgentData agent = null;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override Task OnInitializedAsync ()
+    {
+        client.LoggedInAgentCompleted += UpdateAgent;
+        return base.OnInitializedAsync();
+    }
+
+    private void UpdateAgent (AgentData agent)
+    {
+        this.agent = agent;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if(client is not null)
+            client.LoggedInAgentCompleted -= UpdateAgent;
     }
 }
