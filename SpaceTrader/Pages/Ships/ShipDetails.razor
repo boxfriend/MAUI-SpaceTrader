@@ -112,9 +112,24 @@ else
                 </div>
                 <div id="modules" class="accordion-collapse collapse" aria-labelledby="modulesHeader" data-parent="#topAccordion">
                     <div class="accordion-body">
+                        @{var count = 0;}
                         @foreach (var module in _ship.Modules)
                         {
-                            <ModuleView Module=module />
+                            <div class="accordion" id="moduleAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="moduleHeader">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#module@(count)" aria-expanded="false" aria-controls="module@(count)">
+                                            @module.Name
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="module@(count)" class="accordion-collapse collapse" aria-labelledby="moduleHeader" data-parent="#modulesAccordion">
+                                    <div class="accordion-body">
+                                        <ModuleView Module=module />
+                                    </div>
+                                </div>
+                            </div>
+                            count++;
                         }
                     </div>
                 </div>
