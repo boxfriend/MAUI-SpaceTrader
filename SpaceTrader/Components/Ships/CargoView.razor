@@ -1,4 +1,4 @@
-﻿<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Cargo.Units" aria-valuemin="0" aria-valuemax="@Cargo.Capacity">
+﻿<div class="progress" role="progressbar" aria-label="Ship Cargo Used" aria-valuenow="@Cargo.Units" aria-valuemin="0" aria-valuemax="@Cargo.Capacity">
     <div class="progress-bar progress-bar-striped bg-info overflow-visible" style="width: @((Cargo.Units / (float)Cargo.Capacity) * 100)%">@Cargo.Units / @Cargo.Capacity</div>
 </div>
 @if(Cargo.Inventory is not null)

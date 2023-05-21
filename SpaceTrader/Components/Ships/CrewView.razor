@@ -3,7 +3,7 @@
         <tr>
             <td style="width: 10%">Capacity: </td>
             <td style="width: auto">
-                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Capacity">
+                <div class="progress" role="progressbar" aria-label="Ship Crew Capacity" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Capacity">
                     <div class="progress-bar progress-bar-striped @(PercentToColor(100 - CapacityPercent)) overflow-visible" style="width: @CapacityPercent%">@Crew.Current / @Crew.Capacity</div>
                 </div>
             </td>
@@ -11,7 +11,7 @@
         <tr>
             <td>Required: </td>
             <td>
-                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Required">
+                <div class="progress" role="progressbar" aria-label="Ship Crew Required" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Required">
                     <div class="progress-bar progress-bar-striped @((Crew.Current >= Crew.Required ? "bg-info" : "bg-warning")) overflow-visible" style="width: @RequiredPercent%">@Crew.Current / @Crew.Required</div>
                 </div>
             </td>
@@ -20,7 +20,7 @@
         <tr>
             <td>Morale: </td>
             <td>
-                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Morale" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" role="progressbar" aria-label="Ship Crew Morale" aria-valuenow="@Crew.Morale" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar progress-bar-striped @(PercentToColor(Crew.Morale)) overflow-visible" style="width: @Crew.Morale%">@Crew.Morale</div>
                 </div>
             </td>

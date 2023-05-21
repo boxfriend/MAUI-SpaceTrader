@@ -1,11 +1,30 @@
-﻿<p>@Frame.Symbol</p>
-<p>@Frame.Name</p>
-<p>@Frame.Description</p>
-<p>@Frame.Condition</p>
-<p>@Frame.ModuleSlots</p>
-<p>@Frame.MountingPoints</p>
-<p>@Frame.FuelCapacity</p>
-<RequirementsView Requirements=Frame.Requirements />
+﻿<div>
+    <h3>@Frame.Name</h3>
+    <span class="text-muted">@Frame.Description</span>
+    <div>
+        <div class="progress" role="progressbar" aria-label="Ship Frame Condition" aria-valuenow="@Frame.Condition" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped bg-info overflow-visible" style="width: @Frame.Condition%">Condition: @Frame.Condition%</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <th>Module Slots</th>
+            <th>Mount Points</th>
+            <th>Fuel Capacity</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Frame.ModuleSlots</td>
+                <td>@Frame.MountingPoints</td>
+                <td>@Frame.FuelCapacity</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <RequirementsView Requirements=Frame.Requirements />
+</div>
+
 
 @code {
     [Parameter] public ShipFrame Frame { get; set; }
