@@ -1,10 +1,56 @@
-﻿<p>@Crew.Current</p>
-<p>@Crew.Required</p>
-<p>@Crew.Capacity</p>
-<p>@Crew.Rotation</p>
-<p>@Crew.Morale</p>
-<p>@Crew.Wages</p>
+﻿<table class="table table-borderless">
+    <tbody>
+        <tr>
+            <td style="width: 10%">Capacity: </td>
+            <td style="width: auto">
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Capacity">
+                    <div class="progress-bar progress-bar-striped @(PercentToColor(100 - CapacityPercent)) overflow-visible" style="width: @CapacityPercent%">@Crew.Current / @Crew.Capacity</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Required: </td>
+            <td>
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Current" aria-valuemin="0" aria-valuemax="@Crew.Required">
+                    <div class="progress-bar progress-bar-striped @((Crew.Current >= Crew.Required ? "bg-info" : "bg-warning")) overflow-visible" style="width: @RequiredPercent%">@Crew.Current / @Crew.Required</div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Morale: </td>
+            <td>
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Crew.Morale" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-striped @(PercentToColor(Crew.Morale)) overflow-visible" style="width: @Crew.Morale%">@Crew.Morale</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Rotation: </td>
+            <td style="text-align:left">
+                @Crew.Rotation
+            </td>
+        </tr>
+        <tr>
+            <td>Wages: </td>
+            <td style="text-align:left">
+                @Crew.Wages
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 @code {
     [Parameter] public ShipCrew Crew { get; set; }
+
+    private float CapacityPercent => (Crew.Current / (float)Crew.Capacity) * 100;
+    private float RequiredPercent => (Crew.Current / (float)Crew.Required) * 100;
+
+    private static string PercentToColor(float percent) => percent switch
+    {
+        >= 80 => "bg-success",
+        >= 60 => "bg-info",
+        >= 25 => "bg-warning",
+        _ => "bg-danger"
+    };
 }
