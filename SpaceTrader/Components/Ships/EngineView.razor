@@ -1,8 +1,17 @@
-﻿<p>@Engine.Symbol</p>
-<p>@Engine.Name</p>
-<p>@Engine.Description</p>
-<p>@Engine.Condition</p>
-<p>@Engine.Speed</p>
+﻿<h3>@Engine.Name</h3>
+<span class="text-muted">@Engine.Description</span>
+<div class="progress" role="progressbar" aria-label="Ship Reactor Condition" aria-valuenow="@Engine.Condition" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar progress-bar-striped bg-info overflow-visible" style="width: @Engine.Condition%">Condition: @Engine.Condition%</div>
+</div>
+
+<table class="table table-borderless">
+    <thead>
+        <th>Speed</th>
+    </thead>
+    <tbody>
+        <tr><td>@Engine.Speed</td></tr>
+    </tbody>
+</table>
 <RequirementsView Requirements=Engine.Requirements />
 
 @code{
