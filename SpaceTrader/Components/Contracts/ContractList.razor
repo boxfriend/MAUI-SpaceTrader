@@ -23,7 +23,7 @@
                         <td>@contract.Type</td>
                         <td>@(contract.Accepted ? contract.Terms.Deadline : "???")</td>
                         <td>
-                            <button type="button" @onclick="(async () => await OnDetails.InvokeAsync(contract.ID))">Details</button>
+                            <button type="button" class="btn btn-info" @onclick="(async () => await OnDetails.InvokeAsync(contract.ID))">Details</button>
                         </td>
                     </tr>
                 }
