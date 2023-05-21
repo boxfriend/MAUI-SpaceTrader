@@ -3,10 +3,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Agent Registration</h4>
-                <button type="button" class="close"
-                @onclick="@Cancel">
-                    &times;
-                </button>
+                <button type="button" class="btn-close"
+                @onclick="@Cancel" />
             </div>
             <EditForm Model="@Agent" OnValidSubmit="Ok">
                 <DataAnnotationsValidator/>
