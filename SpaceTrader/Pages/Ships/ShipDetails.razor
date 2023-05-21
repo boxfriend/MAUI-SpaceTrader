@@ -16,167 +16,153 @@
 else
 {
     <h3>@_ship.Symbol</h3>
-    <div>
-        <div id="accordion">
-            <div class="accordion" id="registrationAccordion">
-              <div class="accordion-item">
-                    <h2 class="accordion-header" id="registrationHeader">
-                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="false" aria-controls="registration">
-                            Ship Registration
-                        </button>
-                    </h2>
-                </div>
-                <div id="registration" class="accordion-collapse collapse" aria-labelledby="registrationHeader" data-parent="#accordion">
-                    <div class="accordion-body">
-                        <RegistrationView Registration=_ship.Registration />
-                    </div>
-                </div>
+    <div class="accordion accordion-flush" id="topAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="registrationHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#registration" aria-expanded="false" aria-controls="registration">
+                    Ship Registration
+                </button>
+            </h2>
+        </div>
+        <div id="registration" class="accordion-collapse collapse" aria-labelledby="registrationHeader" data-parent="#topAccordion">
+            <div class="accordion-body">
+                <RegistrationView Registration=_ship.Registration />
             </div>
+        </div>
 
-            <div class="accordion" id="navAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="navigationHeader">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-expanded="false" aria-controls="nav">
-                            Navigation
-                        </button>
-                    </h2>
-                </div>
-                <div id="nav" class="accordion-collapse collapse" aria-labelledby="navigationHeader" data-parent="#accordion">
-                    <div class="accordion-body">
-                        <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" />
-                        <FuelView Fuel=_ship.Fuel />
-                    </div>
-                </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="navigationHeader">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-expanded="false" aria-controls="nav">
+                    Navigation
+                </button>
+            </h2>
+        </div>
+        <div id="nav" class="accordion-collapse collapse" aria-labelledby="navigationHeader" data-parent="#topAccordion">
+            <div class="accordion-body">
+                <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" />
+                <FuelView Fuel=_ship.Fuel />
             </div>
+        </div>
 
-            <div class="accordion" id="crewAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="crewHeader">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#crew" aria-expanded="false" aria-controls="crew">
-                            Crew
-                        </button>
-                    </h2>
-                </div>
-                <div id="crew" class="accordion-collapse collapse" aria-labelledby="crewHeader" data-parent="#accordion">
-                    <div class="accordion-body">
-                        <CrewView Crew=_ship.Crew />
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="configHeader">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#config" aria-expanded="false" aria-controls="config">
+                    Ship Configuration
+                </button>
+            </h2>
+        </div>
+        <div id="config" class="accordion-collapse collapse" aria-labelledby="configHeader" data-parent="#topAccordion">
+            <div class="accordion-body">
+
+                <div class="accordion accordion-flush" id="configAccordion">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="crewHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#crew" aria-expanded="false" aria-controls="crew">
+                                Crew
+                            </button>
+                        </h2>
                     </div>
-                </div>
-            </div>
-
-            <div class="accordion" id="configAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="configHeader">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#config" aria-expanded="false" aria-controls="config">
-                            Ship Configuration
-                        </button>
-                    </h2>
-                </div>
-                <div id="config" class="accordion-collapse collapse" aria-labelledby="configHeader" data-parent="#accordion">
-                    <div class="accordion-body">
-
-                        <div class="accordion" id="frameAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="frameHeader">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#frame" aria-expanded="false" aria-controls="frame">
-                                        Frame
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="frame" class="accordion-collapse collapse" aria-labelledby="frameHeader" data-parent="#configHeader">
-                                <div class="accordion-body">
-                                    <ShipFrameView Frame=_ship.Frame />
-                                </div>
-                            </div>
+                    <div id="crew" class="accordion-collapse collapse" aria-labelledby="crewHeader" data-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <CrewView Crew=_ship.Crew />
                         </div>
+                    </div>
 
-                        <div class="accordion" id="reactorAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="reactorHeader">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#reactor" aria-expanded="false" aria-controls="reactor">
-                                        Reactor
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="reactor" class="accordion-collapse collapse" aria-labelledby="reactorHeader" data-parent="#configHeader">
-                                <div class="accordion-body">
-                                    <ReactorView Reactor=_ship.Reactor />
-                                </div>
-                            </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="frameHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#frame" aria-expanded="false" aria-controls="frame">
+                                Frame
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="frame" class="accordion-collapse collapse" aria-labelledby="frameHeader" data-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <ShipFrameView Frame=_ship.Frame />
                         </div>
+                    </div>
 
-                        <div class="accordion" id="engineAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="engineHeader">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#engine" aria-expanded="false" aria-controls="engine">
-                                        Engine
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="engine" class="accordion-collapse collapse" aria-labelledby="engineHeader" data-parent="#configHeader">
-                                <div class="accordion-body">
-                                    <EngineView Engine=_ship.Engine />
-                                </div>
-                            </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="reactorHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#reactor" aria-expanded="false" aria-controls="reactor">
+                                Reactor
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="reactor" class="accordion-collapse collapse" aria-labelledby="reactorHeader" data-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <ReactorView Reactor=_ship.Reactor />
                         </div>
+                    </div>
 
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="engineHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#engine" aria-expanded="false" aria-controls="engine">
+                                Engine
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="engine" class="accordion-collapse collapse" aria-labelledby="engineHeader" data-parent="#configAccordion">
+                        <div class="accordion-body">
+                            <EngineView Engine=_ship.Engine />
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
             
-            @if (_ship.Modules is not null)
-            {
-                <div class="accordion" id="modulesAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="modulesHeader">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#modules" aria-expanded="false" aria-controls="modules">
-                                Modules
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="modules" class="accordion-collapse collapse" aria-labelledby="modulesHeader" data-parent="#accordion">
-                        <div class="accordion-body">
-                            @foreach (var module in _ship.Modules)
-                            {
-                                <ModuleView Module=module />
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-            @if(_ship.Mounts is not null)
-            {
-                <div class="accordion" id="mountsAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="mountsHeader">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#mounts" aria-expanded="false" aria-controls="mounts">
-                                Mounts
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="mounts" class="accordion-collapse collapse" aria-labelledby="mountsHeader" data-parent="#accordion">
-                        <div class="accordion-body">
-                            @foreach (var mount in _ship.Mounts)
-                            {
-                                <MountView Mount=mount />
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-
-            <div class="accordion" id="cargoAccordion">
+        @if (_ship.Modules is not null)
+        {
+            <div class="accordion" id="modulesAccordion">
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="cargoHeader">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cargo" aria-expanded="false" aria-controls="cargo">
-                            Cargo
+                    <h2 class="accordion-header" id="modulesHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modules" aria-expanded="false" aria-controls="modules">
+                            Modules
                         </button>
                     </h2>
                 </div>
-                <div id="cargo" class="accordion-collapse collapse" aria-labelledby="cargoHeader" data-parent="#accordion">
+                <div id="modules" class="accordion-collapse collapse" aria-labelledby="modulesHeader" data-parent="#topAccordion">
                     <div class="accordion-body">
-                        <CargoView Cargo=_ship.Cargo />
+                        @foreach (var module in _ship.Modules)
+                        {
+                            <ModuleView Module=module />
+                        }
                     </div>
+                </div>
+            </div>
+        }
+        @if(_ship.Mounts is not null)
+        {
+            <div class="accordion" id="mountsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="mountsHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#mounts" aria-expanded="false" aria-controls="mounts">
+                            Mounts
+                        </button>
+                    </h2>
+                </div>
+                <div id="mounts" class="accordion-collapse collapse" aria-labelledby="mountsHeader" data-parent="#topAccordion">
+                    <div class="accordion-body">
+                        @foreach (var mount in _ship.Mounts)
+                        {
+                            <MountView Mount=mount />
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="accordion" id="cargoAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="cargoHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cargo" aria-expanded="false" aria-controls="cargo">
+                        Cargo
+                    </button>
+                </h2>
+            </div>
+            <div id="cargo" class="accordion-collapse collapse" aria-labelledby="cargoHeader" data-parent="#topAccordion">
+                <div class="accordion-body">
+                    <CargoView Cargo=_ship.Cargo />
                 </div>
             </div>
         </div>
