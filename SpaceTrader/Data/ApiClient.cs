@@ -10,8 +10,19 @@ internal class ApiClient
     private readonly RestClient _client;
     private readonly ILogger<ApiClient> _logger;
 
-    public AgentData LoggedInAgent { get; private set; }
+    public AgentData LoggedInAgent
+    {
+        get => _loggedInAgent; 
+        private set
+        {
+            _loggedInAgent = value;
+            LoggedInAgentCompleted?.Invoke(value);
+        }
+    }
     private JwtAuthenticator _authenticator = null;
+    private AgentData _loggedInAgent;
+
+    public event Action<AgentData> LoggedInAgentCompleted;
 
     public ApiClient(ILogger<ApiClient> logger)
     {
