@@ -101,6 +101,6 @@ internal class ApiClient
     public void Login(AgentData agent)
     {
         _loggedInAgent = agent;
-        _authenticator = new(agent.Token);
+        _authenticator = new(agent?.Token ?? "INVALID");
     }
 }
