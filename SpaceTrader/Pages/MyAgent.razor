@@ -1,6 +1,7 @@
 ﻿@page "/myagent"
 @using SpaceTrader.Data
 @inject ApiClient _client
+@inject AgentDbController _database
 
 <h1>My Agent</h1>
 @if(!string.IsNullOrWhiteSpace(Error))
@@ -31,6 +32,7 @@ else
         if(response is not null)
         {
             _myAgent = response.Data;
+            await _database.Update(_myAgent);
             return;
         } else
         {
