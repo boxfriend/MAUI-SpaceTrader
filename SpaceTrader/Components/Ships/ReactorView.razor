@@ -1,8 +1,17 @@
-﻿<p>@Reactor.Symbol</p>
-<p>@Reactor.Name</p>
-<p>@Reactor.Description</p>
-<p>@Reactor.Condition</p>
-<p>@Reactor.PowerOutput</p>
+﻿<h3>@Reactor.Name</h3>
+<span class="text-muted">@Reactor.Description</span>
+<div class="progress" role="progressbar" aria-label="Ship Reactor Condition" aria-valuenow="@Reactor.Condition" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar progress-bar-striped bg-info overflow-visible" style="width: @Reactor.Condition%">Condition: @Reactor.Condition%</div>
+</div>
+
+<table class="table table-borderless">
+    <thead>
+        <th>Power Output</th>
+    </thead>
+    <tbody>
+        <tr><td>@Reactor.PowerOutput</td></tr>
+    </tbody>
+</table>
 <RequirementsView Requirements=Reactor.Requirements />
 
 @code {
