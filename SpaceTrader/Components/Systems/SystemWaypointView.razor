@@ -1,5 +1,6 @@
-﻿<div>
-    @Waypoint.Symbol (@Waypoint.X, @Waypoint.Y) - @Waypoint.Type <button class="btn btn-secondary">Details</button>
+﻿@inject NavigationManager _navManager
+<div>
+    @Waypoint.Symbol (@Waypoint.X, @Waypoint.Y) - @Waypoint.Type <button class="btn btn-secondary" @onclick="(() => OnDetails.InvokeAsync(Waypoint.Symbol))">Details</button>
 </div>
 
 @code {
