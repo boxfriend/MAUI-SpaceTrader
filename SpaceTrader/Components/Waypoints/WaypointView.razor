@@ -1,0 +1,28 @@
+﻿<div>
+    <div>
+        <h4>@Waypoint.Symbol</h4> <span class="badge">@Waypoint.Type</span>
+        <p><strong>System:</strong> @Waypoint.SystemSymbol (@Waypoint.X, @Waypoint.Y)</p>
+    </div>
+    <div>
+        @if(Waypoint.Orbitals is not null)
+        {
+            @foreach(var orbital in Waypoint.Orbitals)
+            {
+                @orbital.Symbol
+            }
+        }
+    </div>
+    <div><strong>Faction:</strong> @Waypoint.Faction.Symbol</div>
+    <div>
+        @if(Waypoint.Traits is not null)
+        {
+            @foreach(var trait in Waypoint.Traits)
+            {
+                <span class="badge rounded-pill bg-light text-dark" data-bs-toggle="tooltip" data-bs-title="@trait.Description">@trait.Name</span>
+            }
+        }
+    </div>
+</div>
+@code {
+    [Parameter] public Waypoint Waypoint { get; set; }
+}
