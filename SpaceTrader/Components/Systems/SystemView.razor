@@ -1,30 +1,89 @@
-﻿<div>
-    <h3>@System.Symbol</h3><span> - @System.SectorSymbol (@System.X, @System.Y)</span>
-    <span>@System.Type</span>
+﻿@inject NavigationManager _navManager
+<div>
+    <h3>@System.Symbol</h3>
+    <span class="text-muted">@System.SectorSymbol</span>
+    <span class="badge bg-light text-dark">@System.Type</span>
 
-    @if(System.Waypoints is not null && System.Waypoints.Length > 0)
+    @if (System.Waypoints is not null)
     {
-        <button class="btn btn-info" data-toggle="collapse" data-target="waypoints">Waypoints</button>
-        <div class="collapse" id="waypoints">
-            @foreach(var waypoint in System.Waypoints)
-            {
-                <SystemWaypointView Waypoint="@waypoint" />
-            }
+        <div class="accordion" id="waypointsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="waypointsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#waypoints" aria-expanded="false" aria-controls="waypoints">
+                        Waypoints
+                    </button>
+                </h2>
+            </div>
+            <div id="waypoints" class="accordion-collapse collapse" aria-labelledby="waypointsHeader" data-parent="#topAccordion">
+                <div class="accordion-body">
+                    @{ var count = 0; }
+                    @foreach (var waypoint in System.Waypoints)
+                    {
+                        <div class="accordion" id="waypointAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="waypointHeader">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#waypoint@(count)" aria-expanded="false" aria-controls="waypoint@(count)">
+                                        @waypoint.Symbol
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="waypoint@(count)" class="accordion-collapse collapse" aria-labelledby="waypointHeader" data-parent="#waypointsAccordion">
+                                <div class="accordion-body">
+                                    <SpaceTrader.Components.Systems.SystemWaypointView Waypoint="@waypoint" OnDetails="@WaypointDetailsClick" />
+                                </div>
+                            </div>
+                        </div>
+                        count++;
+                    }
+                </div>
+            </div>
         </div>
     }
 
-    @if (System.Factions is not null && System.Factions.Length > 0)
+    @if (System.Factions is not null)
     {
-        <button class="btn btn-info" data-toggle="collapse" data-target="factions">Waypoints</button>
-        <div class="collapse" id="factions">
-            @foreach (var faction in System.Factions)
-            {
-                @faction.Symbol
-            }
+        <div class="accordion" id="factionsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="factionsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#factions" aria-expanded="false" aria-controls="factions">
+                        Factions
+                    </button>
+                </h2>
+            </div>
+            <div id="factions" class="accordion-collapse collapse" aria-labelledby="factionsHeader" data-parent="#topAccordion">
+                <div class="accordion-body">
+                    @{ var count = 0; }
+                    <table class="table table-borderless table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Symbol</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var faction in System.Factions)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@faction.Symbol</td>
+                                    <td>DETAILS BUTTON</td>
+                                </tr>
+                                count++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     }
 </div>
 
 @code {
     [Parameter] public System System { get; set; }
+
+    private void WaypointDetailsClick(string symbol)
+    {
+        _navManager.NavigateTo($"waypoint/{System.Symbol}/{symbol}");
+    }
 }

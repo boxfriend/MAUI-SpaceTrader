@@ -1,0 +1,40 @@
+﻿@page "/systemdetails/{symbol}"
+@inject ApiClient _client
+
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (_system == null)
+{
+    <p>Loading Ship Details . . .</p>
+} else
+{
+    <div>
+        <SpaceTrader.Components.Systems.SystemView System="@_system" />
+    </div>
+}
+
+@code {
+    [Parameter] public string Symbol { get; set; }
+
+    private System _system;
+    private string Error { get; set; }
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest($"/systems/{Symbol}", Method.Get);
+        var response = await _client.GetRequest<System>(request, true);
+
+        if (response is not null)
+        {
+            _system = response.Data;
+        } else
+        {
+            Error = "Unable to retrieve ship, please make sure you are logged in";
+        }
+    }
+}
