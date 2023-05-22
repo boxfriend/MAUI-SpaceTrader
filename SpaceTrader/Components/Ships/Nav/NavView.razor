@@ -1,6 +1,7 @@
 ﻿@inject ApiClient _client
+@inject NavigationManager _navManager
 <div>
-    <b>System</b>: @Nav.SystemSymbol <b>Waypoint</b>: @Nav.WaypointSymbol <button class="btn btn-info">Details</button>
+    <b>System</b>: @Nav.SystemSymbol <b>Waypoint</b>: @Nav.WaypointSymbol <button class="btn btn-info" @onclick="@WaypointDetailsClick">Details</button>
     @if(Nav.Route is not null)
     {    
         <div>
@@ -22,5 +23,10 @@
         {
             Nav = response.Data.Nav;
         }
+    }
+
+    private void WaypointDetailsClick ()
+    {
+        _navManager.NavigateTo($"waypoint/{Nav.SystemSymbol}/{Nav.WaypointSymbol}");
     }
 }
