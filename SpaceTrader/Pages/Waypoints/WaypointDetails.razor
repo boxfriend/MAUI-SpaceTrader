@@ -1,0 +1,36 @@
+﻿@page "/waypoint/{system}/{symbol}"
+@inject ApiClient _client
+
+@if(_waypoint is not null)
+{
+    <div>
+        <SpaceTrader.Components.Waypoints.WaypointView Waypoint="@_waypoint" />
+    </div>
+}
+else
+{
+    <p>Loading . . .</p>
+}
+
+@code {
+    [Parameter] public string Symbol { get; set; }
+    [Parameter] public string System { get; set; }
+    private string Error { get; set; }
+
+    private Waypoint _waypoint;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest($"systems/{System}/waypoints/{Symbol}", Method.Get);
+        var response = await _client.GetRequest<Waypoint>(request, true);
+
+        if(response is not null)
+        {
+            _waypoint = response.Data;
+        }
+        else
+        {
+            Error = "Unable to load waypoint details.";
+        }
+    }
+}
