@@ -92,11 +92,11 @@
                             @foreach (var transaction in Market.Transactions)
                             {
                                 <tr>
-                                    <td>@transaction.Trade</td>
+                                    <td>@transaction.TradeSymbol</td>
                                     <td>@transaction.Type</td>
                                     <td>@transaction.PricePerUnit</td>
                                     <td>@transaction.TotalPrice</td>
-                                    <td>@transaction.Ship</td>
+                                    <td>@transaction.ShipSymbol</td>
                                     <td>@transaction.Timestamp</td>
                                 </tr>
                             }
