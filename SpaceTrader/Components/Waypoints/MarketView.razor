@@ -1,0 +1,156 @@
+﻿<div>
+    <h3>@Market.Symbol</h3>
+
+    @if(Market.Exports is not null)
+    {
+        <div class="accordion accordion-flush" id="exportsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="exportsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#exports" aria-expanded="false" aria-controls="exports">
+                        Exports
+                    </button>
+                </h2>
+            </div>
+            <div id="exports" class="accordion-collapse collapse" aria-labelledby="exportsHeader" data-parent="#exportsAccordion">
+                <div class="accordion-body">
+                    @foreach(var export in Market.Exports)
+                    {
+                        <div>@export.Name <span class="text-muted">@export.Description</span></div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Market.Imports is not null)
+    {
+        <div class="accordion accordion-flush" id="importsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="importsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#imports" aria-expanded="false" aria-controls="imports">
+                        Imports
+                    </button>
+                </h2>
+            </div>
+            <div id="imports" class="accordion-collapse collapse" aria-labelledby="importsHeader" data-parent="#importsAccordion">
+                <div class="accordion-body">
+                    @foreach (var export in Market.Imports)
+                    {
+                        <div>@export.Name <span class="text-muted">@export.Description</span></div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Market.Exchange is not null)
+    {
+        <div class="accordion accordion-flush" id="exchangeAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="exchangeHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#exchange" aria-expanded="false" aria-controls="exchange">
+                        Exchange
+                    </button>
+                </h2>
+            </div>
+            <div id="exchange" class="accordion-collapse collapse" aria-labelledby="exchangeHeader" data-parent="#exchangeAccordion">
+                <div class="accordion-body">
+                    @foreach (var export in Market.Exchange)
+                    {
+                        <div>@export.Name <span class="text-muted">@export.Description</span></div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Market.Transactions is not null)
+    {
+        <div class="accordion accordion-flush" id="transactionsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="transactionsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transactions" aria-expanded="false" aria-controls="transactions">
+                        Transactions
+                    </button>
+                </h2>
+            </div>
+            <div id="transactions" class="accordion-collapse collapse" aria-labelledby="transactionsHeader" data-parent="#transactionsAccordion">
+                <div class="accordion-body">
+                    <div class="accordion accordion-flush" id="transactionAccordion">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Good</th>
+                                <th>Type</th>
+                                <th>Per Unit</th>
+                                <th>Total Price</th>
+                                <th>Ship</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in Market.Transactions)
+                            {
+                                <tr>
+                                    <td>@transaction.Trade</td>
+                                    <td>@transaction.Type</td>
+                                    <td>@transaction.PricePerUnit</td>
+                                    <td>@transaction.TotalPrice</td>
+                                    <td>@transaction.Ship</td>
+                                    <td>@transaction.Timestamp</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if(Market.TradeGoods is not null)
+    {
+        <div class="accordion accordion-flush" id="goodsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="goodsHeader">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#goods" aria-expanded="false" aria-controls="goods">
+                        Trade Goods
+                    </button>
+                </h2>
+            </div>
+            <div id="goods" class="accordion-collapse collapse" aria-labelledby="transactionsHeader" data-parent="#goodsAccordion">
+                <div class="accordion-body">
+                    <div class="accordion accordion-flush" id="goodsAccordion">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Good</th>
+                                    <th>Volume</th>
+                                    <th>Supply</th>
+                                    <th>Buy Price</th>
+                                    <th>Sell Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(var good in Market.TradeGoods)
+                                {
+                                    <tr>
+                                        <td>@good.Symbol</td>
+                                        <td>@good.TradeVolume</td>
+                                        <td>@good.Supply</td>
+                                        <td>@good.PurchasePrice</td>
+                                        <td>@good.SellPrice</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Market Market { get; set; }
+}
