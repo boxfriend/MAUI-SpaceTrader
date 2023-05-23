@@ -34,9 +34,8 @@ public record ContractDeliverGood([property: JsonPropertyName("tradeSymbol")] st
 #region Markets
 public record Market(string Symbol, TradeGood[] Exports, TradeGood[] Imports, TradeGood[] Exchange, MarketTransaction[] Transactions, MarketTradeGood[] TradeGoods);
 public record MarketTradeGood(string Symbol, int TradeVolume, string Supply, int PurchasePrice, int SellPrice);
-public record MarketTransaction(string Waypoint, string Ship, string Trade, string Type, int Units, int PricePerUnit, int TotalPrice, DateTime Timestamp);
-public record TradeGood (TradeSymbol Symbol, string Name, string Description);
-public record TradeSymbol (string Symbol);
+public record MarketTransaction(string WaypointSymbol, string ShipSymbol, string TradeSymbol, string Type, int Units, int PricePerUnit, int TotalPrice, DateTime Timestamp);
+public record TradeGood (string Symbol, string Name, string Description);
 #endregion
 
 #region Ships
