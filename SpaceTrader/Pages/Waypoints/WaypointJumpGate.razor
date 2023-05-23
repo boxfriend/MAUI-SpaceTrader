@@ -1,0 +1,31 @@
+﻿@page "/waypoint/{system}/{symbol}/jump-gate"
+@inject ApiClient _client
+<h3>WaypointJumpGate</h3>
+
+<div>
+    <SpaceTrader.Components.Waypoints.JumpGateView JumpGate="@_jumpGate" />
+</div>
+
+@code {
+    [Parameter] public string System { get; set; }
+    [Parameter] public string Symbol { get; set; }
+
+    private JumpGate _jumpGate;
+
+    private string Error { get; set; }
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest("systems/{System}/waypoints/{Symbol}/jump-gate");
+        var response = await _client.GetRequest<JumpGate>(request, true);
+
+        if(response is not null)
+        {
+            _jumpGate = response.Data;
+        }
+        else
+        {
+            Error = "Unable to load Jump Gate details.";
+        }
+    }
+}
