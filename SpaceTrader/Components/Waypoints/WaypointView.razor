@@ -1,4 +1,5 @@
-﻿<div>
+﻿@inject NavigationManager _navManager
+<div>
     <div>
         <h4>@Waypoint.Symbol</h4> <span class="badge">@Waypoint.Type</span>
         <p><strong>System:</strong> @Waypoint.SystemSymbol (@Waypoint.X, @Waypoint.Y)</p>
@@ -22,7 +23,28 @@
             }
         }
     </div>
+    <div>
+        <button type="button" class="btn btn-info" disabled="@(!hasJumpGate)" @onclick="@(() => OnDetailsClick("jump-gate"))">Jump Gate</button>
+        <button type="button" class="btn btn-info" disabled="@(!hasShipyard)" @onclick="@(() => OnDetailsClick("shipyard"))">Shipyard</button>
+        <button type="button" class="btn btn-info" disabled="@(!hasMarket)" @onclick="@(() => OnDetailsClick("market"))">Market</button>
+    </div>
 </div>
 @code {
     [Parameter] public Waypoint Waypoint { get; set; }
+
+    private bool hasJumpGate, hasShipyard, hasMarket;
+
+    protected override void OnInitialized ()
+    {
+        base.OnInitialized();
+
+        hasJumpGate = Waypoint.Type is "JUMP_GATE";
+        hasShipyard = Waypoint.Traits.Any(x => x.Symbol is "SHIPYARD");
+        hasMarket = Waypoint.Traits.Any(x => x.Symbol is "MARKETPLACE" or "BLACK_MARKET");
+    }
+
+    private void OnDetailsClick(string destination)
+    {
+        _navManager.NavigateTo($"waypoint/{Waypoint.SystemSymbol}/{Waypoint.Symbol}/{destination}");
+    }
 }
