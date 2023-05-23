@@ -1,0 +1,36 @@
+﻿<div>
+    <h4>@JumpGate.Faction</h4>
+
+    @if(JumpGate.ConnectedSystems is not null)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>System</th>
+                    <th>Sector</th>
+                    <th>Type</th>
+                    <th>Faction</th>
+                    <th>Distance</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var system in JumpGate.ConnectedSystems)
+                {
+                    <tr>
+                        <td>@system.Name</td>
+                        <td>@system.SectorName</td>
+                        <td>@system.Type</td>
+                        <td>@system.FactionName</td>
+                        <td>@system.Distance</td>
+                        <td>BUTTONS</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    [Parameter] public JumpGate JumpGate { get; set; }
+}
