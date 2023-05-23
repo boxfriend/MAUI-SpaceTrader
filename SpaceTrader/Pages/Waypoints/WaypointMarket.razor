@@ -1,0 +1,43 @@
+﻿@page "/waypoint/{system}/{symbol}/market"
+@inject ApiClient _client
+<h3>Market</h3>
+
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error: </strong>@Error
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if(_market is not null)
+{
+    <div>
+        <SpaceTrader.Components.Waypoints.MarketView Market="@_market" />
+    </div>
+}
+else
+{
+    <p>Loading . . .</p>
+}
+
+@code {
+    [Parameter] public string Symbol { get; set; }
+    [Parameter] public string System { get; set; }
+    private string Error { get; set; }
+    private Market _market;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var request = new RestRequest($"systems/{System}/waypoints/{Symbol}/market", Method.Get);
+        var response = await _client.GetRequest<Market>(request, true);
+
+        if(response is not null)
+        {
+            _market = response.Data;
+        }
+        else
+        {
+            Error = "Unable to load market";
+        }
+    }
+}
