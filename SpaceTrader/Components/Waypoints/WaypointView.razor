@@ -28,14 +28,9 @@
         <button type="button" class="btn btn-info" disabled="@(!hasShipyard)" @onclick="@(() => OnDetailsClick("shipyard"))">Shipyard</button>
         <button type="button" class="btn btn-info" disabled="@(!hasMarket)" @onclick="@(() => OnDetailsClick("market"))">Market</button>
     </div>
-    @if(NavClicked.HasDelegate)
-    {
-        <button type="button" class="btn btn-success" @onclick="@(() => NavClicked.InvokeAsync(Waypoint.Symbol))">Navigate Here</button>
-    }
 </div>
 @code {
     [Parameter] public Waypoint Waypoint { get; set; }
-    [Parameter] public EventCallback<string> NavClicked { get; set; }
 
     private bool hasJumpGate, hasShipyard, hasMarket;
 
