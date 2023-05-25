@@ -58,6 +58,7 @@ public record ShipRegistration(string Name, string FactionSymbol, string Role);
 public record ShipRequirements (int Power, int Crew, int Slots);
 public record ShipType(string Type);
 public record ToggleDock(ShipNav Nav);
+public record NavResponse(ShipFuel Fuel, ShipNav Nav);
 #endregion
 
 #region Shipyard
