@@ -2,6 +2,7 @@
 @using SpaceTrader.Components.Ships
 @using SpaceTrader.Components.Ships.Nav
 @inject ApiClient _client
+@inject NavigationManager _navManager;
 
 @if(!string.IsNullOrWhiteSpace(Error))
 {
@@ -30,6 +31,10 @@ else
             <div class="accordion-body">
                 <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" />
                 <FuelView Fuel=_ship.Fuel />
+                @if(_ship.Nav.Status is "IN_ORBIT")
+                {
+                    <button type="button" class="btn btn-primary" @onclick="@ToDestinationSelect">Select Waypoint Destination</button>
+                }
             </div>
         </div>
 
@@ -188,6 +193,8 @@ else
     </div>
 }
 
+
+
 @code {
     [Parameter] public string Symbol { get; set; }
 
@@ -207,5 +214,10 @@ else
         {
             Error = "Unable to retrieve ship, please make sure you are logged in";
         }
+    }
+
+    private void ToDestinationSelect()
+    {
+        _navManager.NavigateTo($"shipdetails/{Symbol}/navigation/{_ship.Nav.SystemSymbol}");
     }
 }
