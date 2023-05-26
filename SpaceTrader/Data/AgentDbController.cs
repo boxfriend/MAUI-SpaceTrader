@@ -6,9 +6,12 @@ internal class AgentDbController
     private readonly string _dbPath;
     private SQLiteAsyncConnection _connection;
 
-    public AgentDbController(string path)
+    private readonly ApiClient _client;
+
+    public AgentDbController(string path, ApiClient client)
     {
         _dbPath = path;
+        _client = client;
     }
 
     public async Task InitializeAsync()
@@ -44,6 +47,11 @@ internal class AgentDbController
         var agentData = await Get(agent.AccountID);
         agentData = AgentData.FromAPIAgent(agent, agentData.Token);
         await _connection.UpdateAsync(agentData);
+
+        if(_client.LoggedInAgent.AccountID == agentData.AccountID)
+        {
+            _client.Login(agentData);
+        }
     }
 
     public async Task Delete (AgentData data) => await _connection.DeleteAsync(data);
