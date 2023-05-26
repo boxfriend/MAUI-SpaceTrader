@@ -1,12 +1,20 @@
-﻿<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
+﻿@inject ApiClient _client
+@inject AgentDbController _database
+
+<div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
     <div class="progress-bar progress-bar-striped progress-bar-animated @(BarColor()) overflow-visible" style="width: @(FuelPercentage())%">@Fuel.Current / @Fuel.Capacity</div>
 </div>
+@if(FuelPercentage() < 100)
+{
+    <button type="button" class="btn btn-secondary" @onclick="@Refuel">Refuel</button>
+}
 @if(Fuel.Consumed.Amount > 0)
 {
     <p>@Fuel.Consumed.Amount consumed at @Fuel.Consumed.Timestamp</p>
 }
 @code {
     [Parameter] public ShipFuel Fuel { get; set; }
+    [Parameter] public string ShipSymbol { get; set; }
 
     private float FuelPercentage() => Fuel.Current / (float)Fuel.Capacity * 100;
 
@@ -17,4 +25,17 @@
         >= 25 => "bg-warning",
         _ => "bg-danger",
     };
+
+    private async Task Refuel()
+    {
+        var request = new RestRequest($"my/ships/{ShipSymbol}/refuel");
+        var response = await _client.PostRequest<RefuelResponse>(request, true);
+
+        if(response is not null)
+        {
+            Fuel = response.Data.Fuel;
+            await _database.Update(response.Data.Agent);
+        }
+
+    }
 }
