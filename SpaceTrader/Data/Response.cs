@@ -59,6 +59,7 @@ public record ShipRequirements (int Power, int Crew, int Slots);
 public record ShipType(string Type);
 public record ToggleDock(ShipNav Nav);
 public record NavResponse(ShipFuel Fuel, ShipNav Nav);
+public record RefuelResponse(Agent Agent, ShipFuel Fuel, MarketTransaction Transaction);
 #endregion
 
 #region Shipyard
