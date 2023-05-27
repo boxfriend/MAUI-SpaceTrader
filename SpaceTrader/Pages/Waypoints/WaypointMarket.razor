@@ -1,4 +1,4 @@
-﻿@page "/waypoint/{system}/{symbol}/market"
+﻿@page "/waypoint/{system}/{symbol}/market/{ship}"
 @inject ApiClient _client
 <h3>Market</h3>
 
@@ -12,7 +12,7 @@
 @if(_market is not null)
 {
     <div>
-        <SpaceTrader.Components.Waypoints.MarketView Market="@_market" />
+        <SpaceTrader.Components.Waypoints.MarketView Market="@_market" ShipSymbol="@Ship" />
     </div>
 }
 else
@@ -23,6 +23,7 @@ else
 @code {
     [Parameter] public string Symbol { get; set; }
     [Parameter] public string System { get; set; }
+    [Parameter] public string Ship { get; set; }
     private string Error { get; set; }
     private Market _market;
 
