@@ -34,7 +34,22 @@
         <div>
             @foreach(var delivery in Contract.Terms.Deliveries)
             {
-                <span>Deliver @delivery.Required @delivery.Name to @delivery.Destination : Delivered @delivery.Fulfilled</span>
+                <span>Deliver @delivery.Required @delivery.Name to @delivery.Destination</span>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="@delivery.Fulfilled" aria-valuemin="0" aria-valuemax="@delivery.Required" style="width: @((delivery.Fulfilled / delivery.Required)*100)%"></div>
+                </div>
+                <div>
+                    @if(delivery.Fulfilled != delivery.Required)
+                    {
+                        <button type="button" class="btn btn-info">Deliver</button>
+                    }
+                </div>
+            }
+        </div>
+        <div>
+            @if(Contract.Terms.Deliveries.All(x => x.Fulfilled == x.Required))
+            {
+                <button type="button" class="btn btn-success">Fulfill</button>
             }
         </div>
     }
@@ -56,4 +71,6 @@
             Error = "Unable to accept contract";
         }
     }
+
+
 }
