@@ -29,7 +29,7 @@ else
         </div>
         <div id="nav" class="accordion-collapse collapse" aria-labelledby="navigationHeader" data-parent="#topAccordion">
             <div class="accordion-body">
-                <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" />
+                <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" StateChanged="@(nav => _ship = _ship with {Nav = nav})"/>
                 <FuelView Fuel=_ship.Fuel ShipSymbol="@_ship.Symbol"/>
                 @if(_ship.Nav.Status is "IN_ORBIT")
                 {
