@@ -34,7 +34,7 @@
         <div>
             @foreach(var delivery in Contract.Terms.Deliveries)
             {
-                <span>Deliver @delivery.Fulfilled @delivery.Name to @delivery.Destination : Delivered @delivery.Fulfilled</span>
+                <span>Deliver @delivery.Required @delivery.Name to @delivery.Destination : Delivered @delivery.Fulfilled</span>
             }
         </div>
     }
