@@ -31,6 +31,7 @@
 </div>
 @code {
     [Parameter] public Waypoint Waypoint { get; set; }
+    [Parameter] public string ShipSymbol { get; set; }
 
     private bool hasJumpGate, hasShipyard, hasMarket;
 
@@ -39,12 +40,12 @@
         base.OnInitialized();
 
         hasJumpGate = Waypoint.Type is "JUMP_GATE";
-        hasShipyard = Waypoint.Traits.Any(x => x.Symbol is "SHIPYARD");
-        hasMarket = Waypoint.Traits.Any(x => x.Symbol is "MARKETPLACE" or "BLACK_MARKET");
+        hasShipyard = Waypoint.Traits.Any(x => x.Symbol.ToUpper() is "SHIPYARD");
+        hasMarket = Waypoint.Traits.Any(x => x.Symbol.ToUpper() is "MARKETPLACE" or "BLACK_MARKET");
     }
 
     private void OnDetailsClick(string destination)
     {
-        _navManager.NavigateTo($"waypoint/{Waypoint.SystemSymbol}/{Waypoint.Symbol}/{destination}");
+        _navManager.NavigateTo($"waypoint/{Waypoint.SystemSymbol}/{Waypoint.Symbol}/{destination}/{ShipSymbol}");
     }
 }

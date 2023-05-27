@@ -13,6 +13,7 @@
 @code {
     [Parameter] public ShipNav Nav { get; set; }
     [Parameter] public string Symbol { get; set; }
+    [Parameter] public EventCallback<ShipNav> StateChanged { get; set; }
 
     private async Task ToggleDock()
     {
@@ -22,11 +23,12 @@
         if(response is not null)
         {
             Nav = response.Data.Nav;
+            await StateChanged.InvokeAsync(Nav);
         }
     }
 
     private void WaypointDetailsClick ()
     {
-        _navManager.NavigateTo($"waypoint/{Nav.SystemSymbol}/{Nav.WaypointSymbol}");
+        _navManager.NavigateTo($"waypoint/{Nav.SystemSymbol}/{Nav.WaypointSymbol}/{Symbol}");
     }
 }
