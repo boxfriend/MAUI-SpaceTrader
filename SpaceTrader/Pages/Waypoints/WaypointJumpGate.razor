@@ -1,4 +1,4 @@
-﻿@page "/waypoint/{system}/{symbol}/jump-gate"
+﻿@page "/waypoint/{system}/{symbol}/jump-gate/{ship}"
 @inject ApiClient _client
 <h3>WaypointJumpGate</h3>
 
@@ -12,7 +12,7 @@
 @if(_jumpGate is not null)
 {
     <div>
-        <SpaceTrader.Components.Waypoints.JumpGateView JumpGate="@_jumpGate" />
+        <SpaceTrader.Components.Waypoints.JumpGateView JumpGate="@_jumpGate" ShipSymbol="@Ship"/>
     </div>
 }
 else
@@ -24,6 +24,7 @@ else
 @code {
     [Parameter] public string System { get; set; }
     [Parameter] public string Symbol { get; set; }
+    [Parameter] public string Ship { get; set; }
 
     private JumpGate _jumpGate;
 
