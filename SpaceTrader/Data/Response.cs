@@ -36,6 +36,8 @@ public record Market(string Symbol, TradeGood[] Exports, TradeGood[] Imports, Tr
 public record MarketTradeGood(string Symbol, int TradeVolume, string Supply, int PurchasePrice, int SellPrice);
 public record MarketTransaction(string WaypointSymbol, string ShipSymbol, string TradeSymbol, string Type, int Units, int PricePerUnit, int TotalPrice, DateTime Timestamp);
 public record TradeGood (string Symbol, string Name, string Description);
+
+public record TransactionResponse(Agent Agent, ShipCargo Cargo, MarketTransaction Transaction);
 #endregion
 
 #region Ships
