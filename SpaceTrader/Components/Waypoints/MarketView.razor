@@ -1,4 +1,6 @@
-﻿<div>
+﻿@inject ApiClient _client
+@inject AgentDbController _database
+<div>
     <h3>@Market.Symbol</h3>
 
     @if(Market.Exports is not null)
@@ -129,6 +131,7 @@
                                     <th>Supply</th>
                                     <th>Buy Price</th>
                                     <th>Sell Price</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,7 +143,29 @@
                                         <td>@good.Supply</td>
                                         <td>@good.PurchasePrice</td>
                                         <td>@good.SellPrice</td>
+                                        <td>
+                                            @if(ShipSymbol is not null)
+                                            {
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#@(good.Symbol)Buy" aria-expanded="false" aria-controls="@(good.Symbol)Buy">Buy</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#@(good.Symbol)Sell" aria-expanded="false" aria-controls="@(good.Symbol)Sell">Sell</button>
+                                                </div>
+                                            }
+                                        </td>
                                     </tr>
+                                    @if(ShipSymbol is not null)
+                                    {
+                                        <div class="collapse" id="@(good.Symbol)Buy" style="align-self:flex-end">
+                                            <div class="card card-body">
+                                                <input type="number" @bind="@_amount" min="0" max="" /> <button type="button" @onclick="@(() => Buy(good.Symbol,_amount))">BUY</button>
+                                            </div>
+                                        </div>
+                                        <div class="collapse" id="@(good.Symbol)Sell" style="align-self:flex-end">
+                                            <div class="card card-body">
+                                                <input type="number" @bind="@_amount" min="0" max="" /> <button type="button" @onclick="@(() => Sell(good.Symbol,_amount))">SELL</button>
+                                            </div>
+                                        </div>
+                                    }
                                 }
                             </tbody>
                         </table>
@@ -153,4 +178,35 @@
 
 @code {
     [Parameter] public Market Market { get; set; }
+    [Parameter] public string ShipSymbol { get; set; }
+
+    private int _amount;
+
+    private async Task Buy(string symbol, int amount)
+    {
+        var request = new RestRequest($"my/ships/{ShipSymbol}/purchase", Method.Post);
+        request.AddParameter("symbol", symbol);
+        request.AddParameter("units", amount);
+
+        var response = await _client.PostRequest<TransactionResponse>(request, true);
+
+        if (response is not null)
+        {
+            await _database.Update(response.Data.Agent);
+        }
+    }
+
+    private async Task Sell (string symbol, int amount)
+    {
+        var request = new RestRequest($"my/ships/{ShipSymbol}/sell", Method.Post);
+        request.AddParameter("symbol", symbol);
+        request.AddParameter("units", amount);
+
+        var response = await _client.PostRequest<TransactionResponse>(request, true);
+
+        if(response is not null)
+        {
+            await _database.Update(response.Data.Agent);
+        }
+    }
 }
