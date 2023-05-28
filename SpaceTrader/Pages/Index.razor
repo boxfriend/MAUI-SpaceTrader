@@ -151,12 +151,17 @@
         {
             var agent = registration.Agent;
             agent.Token = registration.Token;
+            var accountID = agent.AccountID;
             await _database.Create(agent);
             _allAgents.Add(agent);
             _client.Login(agent);
 
+            var contract = registration.Contract;
+            contract.AccountID = accountID;
+            await _database.InsertContracts(contract);
+
             var ship = ShipData.FromApiObject(registration.Ship);
-            ship.AccountID = agent.AccountID;
+            ship.AccountID = accountID;
             await _shipsDb.InsertOrUpdate(ship);
         }
         else
