@@ -100,3 +100,15 @@ public record WaypointOrbital(string Symbol);
 public record WaypointTrait(string Symbol, string Name, string Description);
 public record WaypointType(string Symbol);
 #endregion
+
+#region System Status
+public record Link(string Name, string Url);
+public record Announcement(string Title, string Body);
+public record ServerReset(DateTime Next, string Frequency);
+public record CreditsLeaderboard(string AgentSymbol, int Credits);
+public record ChartsLeaderboard(string AgentSymbol, int ChartCount);
+public record Leaderboards (CreditsLeaderboard[] MostCredits, ChartsLeaderboard[] MostSubmittedCharts);
+public record Stats(int Agents, int Ships, int Systems, int Waypoints);
+public record GameStatus(string Status, string Version, DateTime ResetDate, string Description, Stats Stats, Leaderboards Leaderboards, ServerReset ServerResets, Announcement[] Announcements, Link[] Links);
+
+#endregion
