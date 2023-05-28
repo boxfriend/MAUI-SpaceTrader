@@ -12,11 +12,14 @@ public class ShipData
     public string SystemSymbol { get; set; }
     public string WaypointSymbol { get; set; }
 
+    public string InventoryString { get; set; }
+
     public static ShipData FromApiObject (Ship ship) => new()
     {
         Symbol = ship.Symbol,
         Role = ship.Registration.Role,
         SystemSymbol = ship.Nav.SystemSymbol,
         WaypointSymbol = ship.Nav.WaypointSymbol,
+        InventoryString = string.Join(",", ship.Cargo.Inventory.Select(x => x.Symbol))
     };
 }
