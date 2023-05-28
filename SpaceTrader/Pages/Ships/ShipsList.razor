@@ -1,5 +1,6 @@
 ﻿@page "/shipslist"
 @inject ApiClient _client
+@inject ShipDbController _shipDatabase
 @inject NavigationManager _navManager
 <h3>Agent Ships</h3>
 
@@ -60,7 +61,10 @@
 }
 else
 {
-    <p>Loading . . .</p>
+    <div class="d-flex align-items-center">
+        <strong>Loading All Ships...</strong>
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+    </div>
 }
 @code {
     private Ship[] _ships;
@@ -92,6 +96,9 @@ else
             _currentPage = page;
             _total = response.Meta.Total;
             _ships = response.Data;
+
+            var ships = _ships.Select(x => { var ship = ShipData.FromApiObject(x); ship.AccountID = _client.LoggedInAgent.AccountID; return ship; });
+            await _shipDatabase.InsertOrUpdate(ships);
         }
         else
         {
