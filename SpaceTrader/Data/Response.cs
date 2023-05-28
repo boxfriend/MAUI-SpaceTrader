@@ -15,7 +15,7 @@ public record Cooldown (string Ship, int TotalLength, int RemainingLength, DateT
 #region Agent And Faction
 public record RegisterData(string Symbol, string Faction);
 public record Registration(Agent Agent, Contract Contract, Faction Faction, Ship Ship, string Token);
-public class Agent
+public record Agent
 {
     [PrimaryKey, Unique, JsonPropertyName("accountId")] public string AccountID { get; set; }
     [Unique, JsonPropertyName("symbol")] public string Name { get; set; }
@@ -32,7 +32,7 @@ public record FactionTrait (string Type, string Name, string Description);
 
 #region Contracts
 public record ContractAccept(Agent Agent, Contract Contract);
-public class Contract
+public record Contract
 {
     [ForeignKey(typeof(Agent))] public string AccountID { get; set; }
     [PrimaryKey,Unique,JsonPropertyName("id")] public string ID { get; set; }
@@ -45,7 +45,7 @@ public class Contract
     public DateTime Expiration { get; set; }
 }
 
-public class ContractTerms
+public record ContractTerms
 {
     [PrimaryKey,AutoIncrement] public int ID { get; set; }
     public DateTime Deadline { get; set; }
@@ -55,14 +55,14 @@ public class ContractTerms
     [Ignore, JsonPropertyName("deliver")] public ContractDeliverGood[] Goods { get; set; }
 }
 
-public class ContractPayment
+public record ContractPayment
 {
     [PrimaryKey,AutoIncrement] public int ID { get; set; }
     public int OnAccepted { get; set; }
     public int OnFulfilled { get; set; }
 }
 
-public class ContractDeliverGood
+public record ContractDeliverGood
 {
     [ForeignKey(typeof(ContractTerms)),Indexed,PrimaryKey] public int TermsID { get; set; }
     public string TradeSymbol { get; set; }
