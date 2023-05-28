@@ -1,0 +1,52 @@
+﻿@page "/about"
+@inject ApiClient _client
+
+<h3>About SpaceTraders</h3>
+
+@if(_status is not null)
+{
+    <div>
+        <h5>Status: @_status.Status</h5>
+        <div>
+            <span>Version: @_status.Version</span> <span>Last Reset: @_status.ResetDate</span>
+            <div class="text-muted">@_status.Description</div>
+        </div>
+    </div>
+
+    @if(_status.Announcements is not null && _status.Announcements.Length > 0)
+    {
+        <div aria-live="polite" aria-atomic="true" class="position-relative">
+            <div class="toast-container position-absolute top-0 end-0 p-3">
+
+                @foreach(var announcement in _status.Announcements)
+                {
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">@announcement.Title</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            @announcement.Body
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="d-flex align-items-center">
+        <strong>Loading Game Status...</strong>
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+    </div>
+}
+
+@code {
+    private GameStatus _status;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        _status = await _client.GetStatus();
+    }
+}
