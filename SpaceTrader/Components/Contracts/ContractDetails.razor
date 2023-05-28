@@ -7,7 +7,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-    <p>@Contract.ID - @Contract.Faction</p>
+    <p>@Contract.ID - @Contract.FactionSymbol</p>
     <p>
         @if(!Contract.Accepted)
         {
@@ -29,17 +29,17 @@
 <div>
     Deadline: @Contract.Terms.Deadline
     <span>Up front: @Contract.Terms.Payment.OnAccepted On Complete: @Contract.Terms.Payment.OnFulfilled</span>
-    @if(Contract.Terms.Deliveries is not null)
+    @if(Contract.Terms.Goods is not null)
     {
         <div>
-            @foreach(var delivery in Contract.Terms.Deliveries)
+            @foreach(var delivery in Contract.Terms.Goods)
             {
-                <span>Deliver @delivery.Required @delivery.Name to @delivery.Destination</span>
+                <span>Deliver @delivery.UnitsRequired @delivery.TradeSymbol to @delivery.DestinationSymbol</span>
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="@delivery.Fulfilled" aria-valuemin="0" aria-valuemax="@delivery.Required" style="width: @((delivery.Fulfilled / delivery.Required)*100)%"></div>
+                    <div class="progress-bar" role="progressbar" aria-valuenow="@delivery.Fulfilled" aria-valuemin="0" aria-valuemax="@delivery.UnitsRequired" style="width: @((delivery.Fulfilled / delivery.UnitsRequired)*100)%"></div>
                 </div>
                 <div>
-                    @if(delivery.Fulfilled != delivery.Required)
+                    @if (delivery.Fulfilled != delivery.UnitsRequired)
                     {
                         <button type="button" class="btn btn-info">Deliver</button>
                     }
@@ -47,7 +47,7 @@
             }
         </div>
         <div>
-            @if(Contract.Terms.Deliveries.All(x => x.Fulfilled == x.Required))
+            @if (Contract.Terms.Goods.All(x => x.Fulfilled == x.UnitsRequired))
             {
                 <button type="button" class="btn btn-success">Fulfill</button>
             }
