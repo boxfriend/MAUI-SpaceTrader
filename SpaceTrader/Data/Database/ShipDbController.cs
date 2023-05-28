@@ -29,9 +29,9 @@ internal class ShipDbController
         await _connection.InsertOrReplaceAsync(shipData);
     }
 
-    public async Task InsertOrUpdate(List<ShipData> shipDatas)
+    public async Task InsertOrUpdate(IEnumerable<ShipData> shipData)
     {
-        foreach(var ship in shipDatas)
+        foreach(var ship in shipData)
             await InsertOrUpdate(ship);
     }
 
