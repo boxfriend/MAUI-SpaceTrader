@@ -1,4 +1,6 @@
-﻿using SQLite;
+﻿using Microsoft.Extensions.Logging;
+using Serilog;
+using SQLite;
 
 namespace SpaceTrader.Data;
 internal class AgentDbController
@@ -7,11 +9,13 @@ internal class AgentDbController
     private SQLiteAsyncConnection _connection;
 
     private readonly ApiClient _client;
+    private readonly ILogger<AgentDbController> _logger;
 
-    public AgentDbController(string path, ApiClient client)
+    public AgentDbController(string path, ApiClient client, ILogger<AgentDbController> logger)
     {
         _dbPath = path;
         _client = client;
+        _logger = logger;
     }
 
     public async Task InitializeAsync()
@@ -23,6 +27,10 @@ internal class AgentDbController
         _connection = new(_dbPath);
 
         await _connection.CreateTableAsync<Agent>();
+        await _connection.CreateTableAsync<Contract>();
+        await _connection.CreateTableAsync<ContractTerms>();
+        await _connection.CreateTableAsync<ContractPayment>();
+        await _connection.CreateTableAsync<ContractDeliverGood>();
     }
 
     public async Task<List<Agent>> GetAll ()
@@ -54,4 +62,24 @@ internal class AgentDbController
     }
 
     public async Task Delete (Agent data) => await _connection.DeleteAsync(data);
+
+    public async Task InsertContracts(params Contract[] contracts)
+    {
+        foreach (var contract in contracts)
+        {
+            var payment = contract.Terms.Payment;
+            await _connection.InsertOrReplaceAsync(payment);
+            var terms = contract.Terms;
+            terms.PaymentID = payment.ID;
+            await _connection.InsertOrReplaceAsync(terms);
+
+            foreach(var good in contract.Terms.Goods)
+            {
+                good.TermsID = terms.ID;
+                await _connection.InsertOrReplaceAsync(good);
+            }
+            contract.TermsID = terms.ID;
+            await _connection.InsertOrReplaceAsync(contract);
+        }
+    }
 }
