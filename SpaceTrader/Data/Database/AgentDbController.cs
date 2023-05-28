@@ -22,21 +22,21 @@ internal class AgentDbController
 
         _connection = new(_dbPath);
 
-        await _connection.CreateTableAsync<AgentData>();
+        await _connection.CreateTableAsync<Agent>();
     }
 
-    public async Task<List<AgentData>> GetAll ()
+    public async Task<List<Agent>> GetAll ()
     {
         await InitializeAsync();
-        return await _connection.Table<AgentData>().ToListAsync();
+        return await _connection.Table<Agent>().ToListAsync();
     }
 
-    public async Task<AgentData> Get(string accountID)
+    public async Task<Agent> Get(string accountID)
     {
         await InitializeAsync();
-        return await _connection.FindAsync<AgentData>(accountID);
+        return await _connection.FindAsync<Agent>(accountID);
     }
-    public async Task<AgentData> Create (AgentData data)
+    public async Task<Agent> Create (Agent data)
     {
         await _connection.InsertAsync(data);
         return data;
@@ -45,7 +45,6 @@ internal class AgentDbController
     public async Task Update (Agent agent)
     {
         var agentData = await Get(agent.AccountID);
-        agentData = AgentData.FromAPIAgent(agent, agentData.Token);
         await _connection.UpdateAsync(agentData);
 
         if(_client.LoggedInAgent.AccountID == agentData.AccountID)
@@ -54,5 +53,5 @@ internal class AgentDbController
         }
     }
 
-    public async Task Delete (AgentData data) => await _connection.DeleteAsync(data);
+    public async Task Delete (Agent data) => await _connection.DeleteAsync(data);
 }

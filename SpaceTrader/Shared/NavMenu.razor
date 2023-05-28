@@ -48,7 +48,7 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private AgentData agent = null;
+    private Agent agent = null;
 
     private void ToggleNavMenu()
     {
@@ -61,7 +61,7 @@
         return base.OnInitializedAsync();
     }
 
-    private void UpdateAgent (AgentData agent)
+    private void UpdateAgent (Agent agent)
     {
         this.agent = agent;
         StateHasChanged();

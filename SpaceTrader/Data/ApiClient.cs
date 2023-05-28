@@ -10,7 +10,7 @@ internal class ApiClient
     private readonly RestClient _client;
     private readonly ILogger<ApiClient> _logger;
 
-    public AgentData LoggedInAgent
+    public Agent LoggedInAgent
     {
         get => _loggedInAgent; 
         private set
@@ -20,9 +20,9 @@ internal class ApiClient
         }
     }
     private JwtAuthenticator _authenticator = null;
-    private AgentData _loggedInAgent;
+    private Agent _loggedInAgent;
 
-    public event Action<AgentData> LoggedInAgentCompleted;
+    public event Action<Agent> LoggedInAgentCompleted;
 
     public ApiClient(ILogger<ApiClient> logger)
     {
@@ -34,8 +34,8 @@ internal class ApiClient
 
     public string DisplayName => LoggedInAgent?.Name ?? "SpaceTraders";
 
-    public bool IsLoggedInAgent(AgentData agent) => LoggedInAgent is not null && LoggedInAgent.AccountID == agent.AccountID;
-    public async Task<AgentData> RetrieveAgent (string token)
+    public bool IsLoggedInAgent(Agent agent) => LoggedInAgent is not null && LoggedInAgent.AccountID == agent.AccountID;
+    public async Task<Agent> RetrieveAgent (string token)
     {
         if (string.IsNullOrWhiteSpace(token))
             throw new InvalidOperationException("Unable to retrieve agent with an empty token.");
@@ -45,7 +45,12 @@ internal class ApiClient
             Authenticator = new JwtAuthenticator(token)
         };
         var response = await GetRequest<Agent>(request);
-        return response is not null ? AgentData.FromAPIAgent(response.Data, token) : null;
+        if (response is null)
+            return null;
+
+        var agent = response.Data;
+        agent.Token = token;
+        return agent;
     }
 
     public async Task<Response<T>> GetRequest<T>(RestRequest request, bool authenticate = false)
@@ -109,7 +114,7 @@ internal class ApiClient
         return response?.Data;
     }
 
-    public void Login(AgentData agent)
+    public void Login(Agent agent)
     {
         LoggedInAgent = agent;
         _authenticator = new(agent?.Token ?? "INVALID");

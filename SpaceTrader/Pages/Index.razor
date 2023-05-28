@@ -3,6 +3,7 @@
 @using SpaceTrader.Components
 @inject ApiClient _client
 @inject AgentDbController _database
+@inject ShipDbController _shipsDb
 @inject NavigationManager _navManager
 
 <h1>Agents</h1>
@@ -86,7 +87,7 @@
 
 }
 @code {
-    private List<AgentData> _allAgents;
+    private List<Agent> _allAgents;
 
     private string Error = string.Empty;
 
@@ -148,10 +149,15 @@
         var registration = await _client.RegisterNewAgent(agentData.AgentName, faction);
         if(registration is not null)
         {
-            var agent = AgentData.FromAPIAgent(registration.Agent, registration.Token);
+            var agent = registration.Agent;
+            agent.Token = registration.Token;
             await _database.Create(agent);
             _allAgents.Add(agent);
             _client.Login(agent);
+
+            var ship = ShipData.FromApiObject(registration.Ship);
+            ship.AccountID = agent.AccountID;
+            await _shipsDb.InsertOrUpdate(ship);
         }
         else
         {
@@ -159,19 +165,19 @@
         }
     }
 
-    private async Task Delete(AgentData agent)
+    private async Task Delete(Agent agent)
     {
         await _database.Delete(agent);
         _allAgents.Remove(agent);
         ClearError();
     }
 
-    private void ViewDetails(AgentData agent)
+    private void ViewDetails(Agent agent)
     {
         _navManager.NavigateTo($"agentdetails/{agent.AccountID}");
     }
 
-    private async Task LoginAgent(AgentData agent)
+    private async Task LoginAgent(Agent agent)
     {
         _client.Login(agent);
 
