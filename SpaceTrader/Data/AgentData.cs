@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace SpaceTrader.Data;
 
@@ -10,15 +11,15 @@ public class AgentData
     public string Headquarters { get; set; }
     public int Credits { get; set; }
 
-    internal static AgentData FromAPIAgent(Agent data, string token)
+    [OneToMany]
+    public List<ShipData> Ships { get; set; }
+
+    internal static AgentData FromAPIAgent (Agent data, string token) => new AgentData()
     {
-        return new AgentData()
-        {
-            AccountID = data.AccountID,
-            Name = data.Name,
-            Token = token,
-            Credits = data.Credits,
-            Headquarters = data.Headquarters,
-        };
-    }
+        AccountID = data.AccountID,
+        Name = data.Name,
+        Token = token,
+        Credits = data.Credits,
+        Headquarters = data.Headquarters,
+    };
 }
