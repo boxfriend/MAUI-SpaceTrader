@@ -2,7 +2,8 @@
 @using SpaceTrader.Components.Ships
 @using SpaceTrader.Components.Ships.Nav
 @inject ApiClient _client
-@inject NavigationManager _navManager;
+@inject ShipDbController _shipDatabase
+@inject NavigationManager _navManager
 
 @if(!string.IsNullOrWhiteSpace(Error))
 {
@@ -209,7 +210,9 @@ else
         if(response is not null)
         {
             _ship = response.Data;
-        }
+            var shipData = new ShipData() { Symbol = _ship.Symbol, AccountID = _client.LoggedInAgent.AccountID };
+            await _shipDatabase.InsertOrUpdate(shipData);
+    }
         else
         {
             Error = "Unable to retrieve ship, please make sure you are logged in";
