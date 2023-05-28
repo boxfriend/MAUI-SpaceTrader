@@ -114,4 +114,26 @@ internal class ApiClient
         LoggedInAgent = agent;
         _authenticator = new(agent?.Token ?? "INVALID");
     }
+
+    public async Task<GameStatus> GetStatus()
+    {
+        var request = new RestRequest("", Method.Get);
+
+        try
+        {
+            var response = await _client.ExecuteGetAsync<GameStatus>(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError(response.StatusDescription);
+            }
+
+            return response.IsSuccessful ? response.Data : null;
+
+        } catch (Exception ex)
+        {
+            _logger.LogCritical(ex.Message);
+            return null;
+        }
+    }
 }
