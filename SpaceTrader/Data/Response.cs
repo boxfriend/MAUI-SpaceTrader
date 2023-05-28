@@ -1,4 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace SpaceTrader.Data;
 internal class Response<T>
@@ -13,22 +15,61 @@ public record Cooldown (string Ship, int TotalLength, int RemainingLength, DateT
 #region Agent And Faction
 public record RegisterData(string Symbol, string Faction);
 public record Registration(Agent Agent, Contract Contract, Faction Faction, Ship Ship, string Token);
-public record Agent([property:JsonPropertyName("accountId")]string AccountID, [property: JsonPropertyName("symbol")] string Name, 
-    [property: JsonPropertyName("headquarters")] string Headquarters, [property: JsonPropertyName("credits")] int Credits);
+public class Agent
+{
+    [PrimaryKey, Unique, JsonPropertyName("accountId")] public string AccountID { get; set; }
+    [Unique, JsonPropertyName("symbol")] public string Name { get; set; }
+    [Unique] public string Token { get; set; }
+    public string Headquarters { get; set; }
+    public int Credits { get; set; }
+    public string StartingFaction { get; set; }
+    [OneToMany] public List<ShipData> Ships { get; set; }
+    [OneToMany] public List<Contract> Contracts { get; set; }
+}
 public record Faction (string Symbol, string Name, string Description, string Headquarters, FactionTrait[] Traits);
 public record FactionTrait (string Type, string Name, string Description);
 #endregion
 
 #region Contracts
 public record ContractAccept(Agent Agent, Contract Contract);
-public record Contract([property: JsonPropertyName("id")] string ID, [property: JsonPropertyName("factionSymbol")] string Faction, 
-    [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("terms")] ContractTerms Terms, [property: JsonPropertyName("accepted")] bool Accepted,
-    [property: JsonPropertyName("fulfilled")] bool Fulfilled, [property: JsonPropertyName("deadlineToAccept")] DateTime Expiration);
-public record ContractTerms([property: JsonPropertyName("deadline")] DateTime Deadline, [property: JsonPropertyName("payment")] ContractPayment Payment,
-    [property: JsonPropertyName("deliver")] ContractDeliverGood[] Deliveries);
-public record ContractPayment([property: JsonPropertyName("onAccepted")] int OnAccepted, [property: JsonPropertyName("onFulfilled")] int OnFulfilled);
-public record ContractDeliverGood([property: JsonPropertyName("tradeSymbol")] string Name, [property: JsonPropertyName("destinationSymbol")] string Destination,
-    [property: JsonPropertyName("unitsRequired")] int Required, [property: JsonPropertyName("unitsFulfilled")] int Fulfilled);
+public class Contract
+{
+    [ForeignKey(typeof(Agent))] public string AccountID { get; set; }
+    [PrimaryKey,Unique,JsonPropertyName("id")] public string ID { get; set; }
+    public string FactionSymbol { get; set; }
+    public string Type { get; set; }
+    [ForeignKey(typeof(ContractTerms))] public int TermsID { get; set; }
+    [OneToOne] public ContractTerms Terms { get; set; }
+    public bool Accepted { get; set; }
+    public bool Fulfilled { get; set; }
+    public DateTime Expiration { get; set; }
+}
+
+public class ContractTerms
+{
+    [PrimaryKey,AutoIncrement] public int ID { get; set; }
+    public DateTime Deadline { get; set; }
+    [ForeignKey(typeof(ContractPayment))] public int PaymentID { get; set; }
+    [OneToOne] public ContractPayment Payment { get; set; }
+    [OneToMany, JsonIgnore] public List<ContractDeliverGood> Deliveries { get; set; }
+    [Ignore, JsonPropertyName("deliver")] public ContractDeliverGood[] Goods { get; set; }
+}
+
+public class ContractPayment
+{
+    [PrimaryKey,AutoIncrement] public int ID { get; set; }
+    public int OnAccepted { get; set; }
+    public int OnFulfilled { get; set; }
+}
+
+public class ContractDeliverGood
+{
+    [ForeignKey(typeof(ContractTerms)),Indexed,PrimaryKey] public int TermsID { get; set; }
+    public string TradeSymbol { get; set; }
+    public string DestinationSymbol { get; set; }
+    public int UnitsRequired { get; set; }
+    public int Fulfilled { get; set; }
+}
 #endregion
 
 #region Markets
