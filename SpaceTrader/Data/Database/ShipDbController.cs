@@ -11,7 +11,6 @@ internal class ShipDbController
     {
         _dbPath = path;
     }
-
     public async Task InitializeAsync ()
     {
 
@@ -21,6 +20,7 @@ internal class ShipDbController
         _connection = new(_dbPath);
 
         await _connection.CreateTableAsync<ShipData>();
+        await _connection.CreateTableAsync<CargoItem>();
     }
 
     public async Task InsertOrUpdate(ShipData shipData)
@@ -28,6 +28,28 @@ internal class ShipDbController
         await InitializeAsync();
         await _connection.InsertOrReplaceAsync(shipData);
     }
+    public async Task InsertOrUpdate(Ship ship, string accountID)
+    {
+        var shipData = ShipData.FromApiObject(ship);
+        shipData.AccountID = accountID;
+        await InsertOrUpdate(shipData);
+        await DeleteShipCargo(shipData);
+        foreach (var item in ship.Cargo.Inventory)
+        {
+            var cargo = CargoItem.FromApiObject(item);
+            cargo.Ship = shipData.Symbol;
+            await _connection.InsertOrReplaceAsync(cargo);
+        }
+    }
+    public async Task InsertOrUpdate (IEnumerable<Ship> ships, string accountID)
+    {
+        foreach(var ship in ships)
+        {
+            await InsertOrUpdate(ship, accountID);
+        }
+    }
+
+    private async Task DeleteShipCargo (ShipData ship) => await _connection.Table<CargoItem>().DeleteAsync(x => x.Ship == ship.Symbol);
 
     public async Task InsertOrUpdate(IEnumerable<ShipData> shipData)
     {
@@ -41,16 +63,13 @@ internal class ShipDbController
         await _connection.DeleteAsync(data);
     }
 
-    public async Task DeleteAllFromAgent(AgentData data)
+    public async Task DeleteAllFromAgent(Agent data)
     {
         var allShips = await GetAgentShips(data);
-        foreach(var ship in allShips)
-        {
-            await Delete(ship);
-        }
+        await _connection.DeleteAllAsync(allShips);
     }
 
-    public async Task<List<ShipData>> GetAgentShips (AgentData data) => await GetAgentShips(data.AccountID);
+    public async Task<List<ShipData>> GetAgentShips (Agent data) => await GetAgentShips(data.AccountID);
     public async Task<List<ShipData>> GetAgentShips (string accountID)
     {
         await InitializeAsync();
@@ -63,4 +82,15 @@ internal class ShipDbController
         return await _connection.GetAsync<ShipData>(shipSymbol);
     }
     public async Task<ShipData> GetShip(ShipData ship) => await GetShip(ship.Symbol);
+}
+
+public static class SqliteExtensions
+{
+    public static async Task DeleteAllAsync<T>(this SQLiteAsyncConnection conn, IEnumerable<T> data)
+    {
+        foreach(var d in data)
+        {
+            await conn.DeleteAsync(d);
+        }
+    }
 }
