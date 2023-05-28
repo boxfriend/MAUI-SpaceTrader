@@ -66,6 +66,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00910" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
         <PackageReference Include="sqlite-net-pcl" Version="1.9.141-beta" />
+        <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
         <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.4" />
     </ItemGroup>
 
