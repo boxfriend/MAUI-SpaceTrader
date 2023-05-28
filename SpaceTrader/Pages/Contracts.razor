@@ -1,6 +1,7 @@
 ﻿@page "/contracts"
 @using SpaceTrader.Components.Contracts
 @inject ApiClient _client
+@inject AgentDbController _database
 <h3>Contracts</h3>
 @if(_contracts is not null && _contracts.Count() > 0)
 {
@@ -71,6 +72,9 @@ else
         if (response is not null)
         {
             _toShow = response.Data;
+
+            _toShow.AccountID = _client.LoggedInAgent.AccountID;
+            await _database.InsertContracts(_toShow);
         } else
         {
             Error = $"Unable to load contract {contract}";
