@@ -14,6 +14,9 @@
 
 @if(Ships is not null)
 {
+    <div>
+        <button type="button" class="btn btn-info" @onclick="@RefreshShipsList">Refresh Ships</button>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -74,5 +77,40 @@ else
     private void ShipDetails(string symbol)
     {
         _navManager.NavigateTo($"/shipdetails/{symbol}");
+    }
+
+    //This naively assumes agent owns few enough ships to not hit rate limit
+    private async Task RefreshShipsList()
+    {
+        const int limit = 20;
+        var page = 1;
+        var total = 0;
+
+        Ships.Clear();
+        do
+        {
+            var request = new RestRequest("my/ships", Method.Get);
+            request.AddParameter("limit", limit);
+            request.AddParameter("page", page++);
+
+            var response = await _client.GetRequest<Ship[]>(request, true);
+            if(response is not null)
+            {
+                total = response.Meta.Total;
+                foreach(var ship in response.Data)
+                {
+                    var data = ShipData.FromApiObject(ship);
+                    data.AccountID = _client.LoggedInAgent.AccountID;
+                    Ships.Add(data);
+                    await _shipDatabase.InsertOrUpdate(data);
+                }
+            }
+            else
+            {
+                Error = "Unable to load ships";
+                break;
+            }
+        }
+        while (Ships.Count < total);
     }
 }
