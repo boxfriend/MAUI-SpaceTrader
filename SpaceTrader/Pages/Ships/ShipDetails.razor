@@ -210,10 +210,8 @@ else
         if(response is not null)
         {
             _ship = response.Data;
-            var shipData = ShipData.FromApiObject(_ship);
-            shipData.AccountID = _client.LoggedInAgent.AccountID;
-            await _shipDatabase.InsertOrUpdate(shipData);
-    }
+            await _shipDatabase.InsertOrUpdate(_ship, _client.LoggedInAgent.AccountID);
+        }
         else
         {
             Error = "Unable to retrieve ship, please make sure you are logged in";
