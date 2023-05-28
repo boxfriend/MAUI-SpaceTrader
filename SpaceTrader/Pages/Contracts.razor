@@ -47,7 +47,6 @@ else
     protected override async Task OnInitializedAsync ()
     {
         var request = new RestRequest("my/contracts", Method.Get);
-        //request.AddJsonBody(new { limit, page });
         request.AddParameter("limit", limit);
         request.AddParameter("page", page);
 
@@ -71,9 +70,7 @@ else
         var response = await _client.GetRequest<Contract>(request, true);
         if (response is not null)
         {
-            _toShow = response.Data;
-
-            _toShow.AccountID = _client.LoggedInAgent.AccountID;
+            _toShow = response.Data with { AccountID = _client.LoggedInAgent.AccountID };
             await _database.InsertContracts(_toShow);
         } else
         {

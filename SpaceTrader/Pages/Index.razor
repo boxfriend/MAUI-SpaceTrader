@@ -149,15 +149,13 @@
         var registration = await _client.RegisterNewAgent(agentData.AgentName, faction);
         if(registration is not null)
         {
-            var agent = registration.Agent;
-            agent.Token = registration.Token;
+            var agent = registration.Agent with { Token = registration.Token };
             var accountID = agent.AccountID;
             await _database.Create(agent);
             _allAgents.Add(agent);
             _client.Login(agent);
 
-            var contract = registration.Contract;
-            contract.AccountID = accountID;
+            var contract = registration.Contract with { AccountID = accountID };
             await _database.InsertContracts(contract);
 
             var ship = ShipData.FromApiObject(registration.Ship);
@@ -193,7 +191,6 @@
         {
             var myAgent = response.Data;
             await _database.Update(myAgent);
-            return;
         } else
         {
             Error = "Unable to sign in. Please ensure you have a valid internet connection and a valid API token.";
