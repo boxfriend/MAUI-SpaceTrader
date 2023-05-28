@@ -210,7 +210,8 @@ else
         if(response is not null)
         {
             _ship = response.Data;
-            var shipData = new ShipData() { Symbol = _ship.Symbol, AccountID = _client.LoggedInAgent.AccountID };
+            var shipData = ShipData.FromApiObject(_ship);
+            shipData.AccountID = _client.LoggedInAgent.AccountID;
             await _shipDatabase.InsertOrUpdate(shipData);
     }
         else
