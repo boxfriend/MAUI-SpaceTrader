@@ -39,6 +39,7 @@ public static class MauiProgram
 
         var path = Path.Combine(envPath, "Agents.db");
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ShipDbController>(s, path));
 
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ApiClient>(s));
 
