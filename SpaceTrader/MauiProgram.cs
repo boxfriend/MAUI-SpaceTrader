@@ -33,8 +33,9 @@ public static class MauiProgram
 #else
             .MinimumLevel.Information()
 #endif
-            .WriteTo.Async(a => a.File(Path.Combine(envPath, "log.txt"),
+            .WriteTo.Async(a => a.File(Path.Combine(envPath, $"logs{Path.DirectorySeparatorChar}{DateTime.Now.Date:yyyy-MM-dd}.log"),
                 outputTemplate: template))
+			.Enrich.WithThreadId()
             .CreateLogger()));
 
         var path = Path.Combine(envPath, "Agents.db");
