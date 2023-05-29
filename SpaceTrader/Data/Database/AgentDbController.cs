@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Serilog;
 using SQLite;
+using SQLiteNetExtensions.Extensions;
+using SQLiteNetExtensionsAsync.Extensions;
 
 namespace SpaceTrader.Data;
 internal class AgentDbController
@@ -31,6 +33,7 @@ internal class AgentDbController
         await _connection.CreateTableAsync<ContractTerms>();
         await _connection.CreateTableAsync<ContractPayment>();
         await _connection.CreateTableAsync<ContractDeliverGood>();
+
     }
 
     public async Task<List<Agent>> GetAll ()
@@ -46,12 +49,14 @@ internal class AgentDbController
     }
     public async Task<Agent> Create (Agent data)
     {
+        await InitializeAsync();
         await _connection.InsertAsync(data);
         return data;
     }
 
     public async Task Update (Agent agent)
     {
+        await InitializeAsync();
         var agentData = await Get(agent.AccountID);
         await _connection.UpdateAsync(agentData);
 
@@ -65,21 +70,29 @@ internal class AgentDbController
 
     public async Task InsertContracts(params Contract[] contracts)
     {
-        foreach (var contract in contracts)
+        await InitializeAsync();
+        try
         {
-            var payment = contract.Terms.Payment;
-            await _connection.InsertOrReplaceAsync(payment);
-            var terms = contract.Terms;
-            terms.PaymentID = payment.ID;
-            await _connection.InsertOrReplaceAsync(terms);
+            await _connection.InsertOrReplaceAllWithChildrenAsync(contracts,true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex.Message);
+            throw;
+        }
+    }
 
-            foreach(var good in contract.Terms.Goods)
-            {
-                good.TermsID = terms.ID;
-                await _connection.InsertOrReplaceAsync(good);
-            }
-            contract.TermsID = terms.ID;
-            await _connection.InsertOrReplaceAsync(contract);
+    public async Task<Contract> GetContract(string contractID)
+    {
+        await InitializeAsync();
+        try
+        {
+            return await _connection.GetWithChildrenAsync<Contract>(contractID,true);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogCritical(ex.Message);
+            throw;
         }
     }
 }
