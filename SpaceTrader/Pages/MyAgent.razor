@@ -32,7 +32,7 @@ else
         if(response is not null)
         {
             _myAgent = response.Data;
-            await _database.Update(_myAgent);
+            await _database.Insert(_myAgent);
             return;
         } else
         {

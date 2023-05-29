@@ -192,7 +192,7 @@
 
         if (response is not null)
         {
-            await _database.Update(response.Data.Agent);
+            await _database.Insert(response.Data.Agent);
         }
     }
 
@@ -206,7 +206,7 @@
 
         if(response is not null)
         {
-            await _database.Update(response.Data.Agent);
+            await _database.Insert(response.Data.Agent);
         }
     }
 }

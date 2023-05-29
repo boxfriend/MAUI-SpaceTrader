@@ -34,7 +34,7 @@
         if(response is not null)
         {
             Fuel = response.Data.Fuel;
-            await _database.Update(response.Data.Agent);
+            await _database.Insert(response.Data.Agent);
         }
 
     }

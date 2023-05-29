@@ -210,7 +210,7 @@ else
         if(response is not null)
         {
             _ship = response.Data;
-            await _shipDatabase.InsertOrUpdate(_ship, _client.LoggedInAgent.AccountID);
+            await _shipDatabase.Insert(_ship, _client.LoggedInAgent.AccountID);
         }
         else
         {

@@ -31,10 +31,9 @@
 
     protected override async Task OnInitializedAsync ()
     {
-        _contractDetails = await _agentDb.GetContract(Contract);
+        _contractDetails = await _agentDb.Get<Contract>(Contract);
         _ships = await _shipDb.GetAgentShips(_client.LoggedInAgent);
         var deliveries = _contractDetails.Terms.Deliveries;
         _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.WaypointSymbol && ship.Inventory.Any(i => i.Symbol == d.TradeSymbol)));
     }
-
 }
