@@ -1,38 +1,31 @@
-﻿using SQLite;
+﻿using Microsoft.Extensions.Logging;
+using SQLite;
+using SQLiteNetExtensionsAsync.Extensions;
 
 namespace SpaceTrader.Data;
 
-internal class ShipDbController
+internal class ShipDbController : BaseDbController
 {
-    private readonly string _dbPath;
-    private SQLiteAsyncConnection _connection;
 
-    public ShipDbController (string path)
-    {
-        _dbPath = path;
-    }
-    public async Task InitializeAsync ()
+
+    public ShipDbController (string path, ApiClient client, ILogger<BaseDbController> logger) : base(path, client, logger) { }
+    protected override async Task Initialize ()
     {
 
-        if (_connection != null)
+        if (_isInitialized)
             return;
 
-        _connection = new(_dbPath);
-
+        _isInitialized = true;
         await _connection.CreateTableAsync<ShipData>();
         await _connection.CreateTableAsync<CargoItem>();
     }
 
-    public async Task InsertOrUpdate(ShipData shipData)
-    {
-        await InitializeAsync();
-        await _connection.InsertOrReplaceAsync(shipData);
-    }
-    public async Task InsertOrUpdate(Ship ship, string accountID)
+    
+    public async Task Insert(Ship ship, string accountID)
     {
         var shipData = ShipData.FromApiObject(ship);
         shipData.AccountID = accountID;
-        await InsertOrUpdate(shipData);
+        await Insert(shipData);
         await DeleteShipCargo(shipData);
         foreach (var item in ship.Cargo.Inventory)
         {
@@ -41,47 +34,28 @@ internal class ShipDbController
             await _connection.InsertOrReplaceAsync(cargo);
         }
     }
-    public async Task InsertOrUpdate (IEnumerable<Ship> ships, string accountID)
+    public async Task Insert (IEnumerable<Ship> ships, string accountID)
     {
         foreach(var ship in ships)
         {
-            await InsertOrUpdate(ship, accountID);
+            await Insert(ship, accountID);
         }
     }
 
     private async Task DeleteShipCargo (ShipData ship) => await _connection.Table<CargoItem>().DeleteAsync(x => x.Ship == ship.Symbol);
 
-    public async Task InsertOrUpdate(IEnumerable<ShipData> shipData)
-    {
-        foreach(var ship in shipData)
-            await InsertOrUpdate(ship);
-    }
-
-    public async Task Delete (ShipData data)
-    {
-        await InitializeAsync();
-        await _connection.DeleteAsync(data);
-    }
-
     public async Task DeleteAllFromAgent(Agent data)
     {
         var allShips = await GetAgentShips(data);
-        await _connection.DeleteAllAsync(allShips);
+        await _connection.DeleteAllAsync(allShips, true);
     }
 
     public async Task<List<ShipData>> GetAgentShips (Agent data) => await GetAgentShips(data.AccountID);
     public async Task<List<ShipData>> GetAgentShips (string accountID)
     {
-        await InitializeAsync();
-        return await _connection.Table<ShipData>().Where(ship => ship.AccountID == accountID).ToListAsync();
+        await Initialize();
+        return await _connection.GetAllWithChildrenAsync<ShipData>(ship => ship.AccountID == accountID);
     }
-
-    public async Task<ShipData> GetShip(string shipSymbol)
-    {
-        await InitializeAsync();
-        return await _connection.GetAsync<ShipData>(shipSymbol);
-    }
-    public async Task<ShipData> GetShip(ShipData ship) => await GetShip(ship.Symbol);
 }
 
 public static class SqliteExtensions
