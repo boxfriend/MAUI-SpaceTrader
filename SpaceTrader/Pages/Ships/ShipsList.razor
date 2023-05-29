@@ -2,62 +2,68 @@
 @inject ApiClient _client
 @inject ShipDbController _shipDatabase
 @inject NavigationManager _navManager
-<h3>Agent Ships</h3>
-
-@if (!string.IsNullOrWhiteSpace(Error))
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Error: </strong>@Error
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container-fluid">
+    <div class="row align-items-end">
+        <div class="col-lg-4">
+            <h3>Agent Ships</h3>
+        </div>
+        <div class="col-lg-4 ms-auto">
+            <button type="button" class="btn btn-info" @onclick="@RefreshShipsList">Refresh Ships</button>
+        </div>
     </div>
-}
 
-@if(Ships is not null)
-{
-    <div>
-        <button type="button" class="btn btn-info" @onclick="@RefreshShipsList">Refresh Ships</button>
-    </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th width="10%">#</th>
-                <th width="30%">Name</th>
-                <th width="30%">Role</th>
-                <th width="20%">Location</th>
-                <th width="10%"></th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (!string.IsNullOrWhiteSpace(Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error: </strong>@Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-            @{
-                var count = 1;
-                foreach (var ship in Ships)
-                {
-                    <tr>
-                        <td>@count</td>
-                        <td>@ship.Symbol</td>
-                        <td>@ship.Role</td>
-                        <td>@ship.WaypointSymbol</td>
-                        <td>
-                            <button type="button" class="btn btn-info"
-                            @onclick="(() => ShipDetails(ship.Symbol))">
-                                Details
-                            </button>
-                        </td>
-                    </tr>
-                    count++;
+    @if(Ships is not null)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="10%">#</th>
+                    <th width="30%">Name</th>
+                    <th width="30%">Role</th>
+                    <th width="20%">Location</th>
+                    <th width="10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    var count = 1;
+                    foreach (var ship in Ships)
+                    {
+                        <tr>
+                            <td>@count</td>
+                            <td>@ship.Symbol</td>
+                            <td>@ship.Role</td>
+                            <td>@ship.WaypointSymbol</td>
+                            <td>
+                                <button type="button" class="btn btn-info"
+                                @onclick="(() => ShipDetails(ship.Symbol))">
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                        count++;
+                    }
                 }
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="d-flex align-items-center">
-        <strong>Loading All Ships...</strong>
-        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-    </div>
-}
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="d-flex align-items-center">
+            <strong>Loading All Ships...</strong>
+            <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+        </div>
+    }
+</div>
 @code {
     private List<ShipData> Ships { get; set; }
 
