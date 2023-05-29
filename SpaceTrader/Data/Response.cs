@@ -23,8 +23,8 @@ public record Agent
     public string Headquarters { get; set; }
     public int Credits { get; set; }
     public string StartingFaction { get; set; }
-    [OneToMany] public List<ShipData> Ships { get; set; }
-    [OneToMany] public List<Contract> Contracts { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<ShipData> Ships { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<Contract> Contracts { get; set; }
 }
 public record Faction (string Symbol, string Name, string Description, string Headquarters, FactionTrait[] Traits);
 public record FactionTrait (string Type, string Name, string Description);
@@ -38,8 +38,7 @@ public record Contract
     [PrimaryKey,Unique,JsonPropertyName("id")] public string ID { get; set; }
     public string FactionSymbol { get; set; }
     public string Type { get; set; }
-    [ForeignKey(typeof(ContractTerms))] public int TermsID { get; set; }
-    [OneToOne] public ContractTerms Terms { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ContractTerms Terms { get; set; }
     public bool Accepted { get; set; }
     public bool Fulfilled { get; set; }
     public DateTime Expiration { get; set; }
@@ -47,24 +46,23 @@ public record Contract
 
 public record ContractTerms
 {
-    [PrimaryKey,AutoIncrement] public int ID { get; set; }
+    [ForeignKey(typeof(Contract)),PrimaryKey] public string ID { get; set; }
     public DateTime Deadline { get; set; }
-    [ForeignKey(typeof(ContractPayment))] public int PaymentID { get; set; }
-    [OneToOne] public ContractPayment Payment { get; set; }
-    [OneToMany, JsonIgnore] public List<ContractDeliverGood> Deliveries { get; set; }
-    [Ignore, JsonPropertyName("deliver")] public ContractDeliverGood[] Goods { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ContractPayment Payment { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All), JsonPropertyName("deliver")] public List<ContractDeliverGood> Deliveries { get; set; }
 }
 
 public record ContractPayment
 {
-    [PrimaryKey,AutoIncrement] public int ID { get; set; }
+    [ForeignKey(typeof(ContractTerms)), PrimaryKey] public string ID { get; set; }
     public int OnAccepted { get; set; }
     public int OnFulfilled { get; set; }
 }
 
 public record ContractDeliverGood
 {
-    [ForeignKey(typeof(ContractTerms)),Indexed,PrimaryKey] public int TermsID { get; set; }
+    [ForeignKey(typeof(ContractTerms)),Indexed] public string TermsID { get; set; }
+    [PrimaryKey,AutoIncrement] public int ID { get; set; }
     public string TradeSymbol { get; set; }
     public string DestinationSymbol { get; set; }
     public int UnitsRequired { get; set; }
@@ -120,10 +118,31 @@ public record ExtractionYield (string Name, int Units);
 
 #region Systems
 public record ScannedSystem (string Symbol, string SectorSymbol, string Type, int X, int Y, int Distance);
-public record System(string Symbol, string SectorSymbol, string Type, int X, int Y, SystemWaypoint[] Waypoints, SystemFaction[] Factions);
-public record SystemFaction(string Symbol);
+
+public record System
+{
+    [PrimaryKey] public string Symbol { get; set; }
+    [Indexed] public string SectorSymbol { get; set; }
+    public string Type { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<SystemWaypoint> Waypoints { get; set; }
+    [Ignore] public string[] Factions { get; set; }
+}
+public record SystemFaction
+{
+    public string Symbol { get; set; }
+    public string System { get; set; }
+}
 public record SystemType(string Type);
-public record SystemWaypoint(string Symbol, string Type, int X, int Y);
+public record SystemWaypoint
+{
+    [ForeignKey(typeof(System))] public string System { get; set; }
+    [PrimaryKey] public string Symbol { get; set; }
+    public string Type { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+}
 
 public record ConnectedSystem ([property: JsonPropertyName("symbol")] string Name, [property: JsonPropertyName("sectorSymbol")] string SectorName,
     [property: JsonPropertyName("type")] string Type, [property: JsonPropertyName("factionSymbol")] string FactionName,
