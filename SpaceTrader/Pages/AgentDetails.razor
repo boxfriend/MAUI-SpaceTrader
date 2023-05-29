@@ -13,6 +13,6 @@
 
     protected override async Task OnInitializedAsync ()
     {
-        _agent = await _database.Get(AccountID);
+        _agent = await _database.Get<Agent>(AccountID);
     }
 }
