@@ -71,15 +71,17 @@ internal class AgentDbController
     public async Task InsertContracts(params Contract[] contracts)
     {
         await InitializeAsync();
-        try
+        foreach (var contract in contracts)
         {
-            await _connection.InsertOrReplaceAllWithChildrenAsync(contracts,true);
+            contract.Terms.ID = contract.ID;
+            contract.Terms.Payment.ID = contract.ID;
+
+            foreach (var good in contract.Terms.Deliveries)
+            {
+                good.TermsID = contract.ID;
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex.Message);
-            throw;
-        }
+        await _connection.InsertOrReplaceAllWithChildrenAsync(contracts, true);
     }
 
     public async Task<Contract> GetContract(string contractID)
