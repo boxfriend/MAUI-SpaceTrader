@@ -1,0 +1,40 @@
+﻿@page "/delivercontract/{contract}"
+@inject ApiClient _client
+@inject AgentDbController _agentDb
+@inject ShipDbController _shipDb
+
+@if(_ships is not null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Ship</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var ship in _ships)
+            {
+                <tr>
+                    <td>@ship.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public string Contract { get; set; }
+    [Parameter] public string Item { get; set; }
+
+    private Contract _contractDetails;
+    private IEnumerable<ShipData> _ships;
+
+    protected override async Task OnInitializedAsync ()
+    {
+        _contractDetails = await _agentDb.GetContract(Contract);
+        _ships = await _shipDb.GetAgentShips(_client.LoggedInAgent);
+        var deliveries = _contractDetails.Terms.Deliveries;
+        _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.WaypointSymbol && ship.Inventory.Any(i => i.Symbol == d.TradeSymbol)));
+    }
+
+}

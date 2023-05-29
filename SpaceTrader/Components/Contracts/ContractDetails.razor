@@ -29,10 +29,10 @@
 <div>
     Deadline: @Contract.Terms.Deadline
     <span>Up front: @Contract.Terms.Payment.OnAccepted On Complete: @Contract.Terms.Payment.OnFulfilled</span>
-    @if(Contract.Terms.Goods is not null)
+    @if(Contract.Terms.Deliveries is not null)
     {
         <div>
-            @foreach(var delivery in Contract.Terms.Goods)
+            @foreach (var delivery in Contract.Terms.Deliveries)
             {
                 <span>Deliver @delivery.UnitsRequired @delivery.TradeSymbol to @delivery.DestinationSymbol</span>
                 <div class="progress">
@@ -41,13 +41,13 @@
                 <div>
                     @if (delivery.Fulfilled != delivery.UnitsRequired)
                     {
-                        <button type="button" class="btn btn-info">Deliver</button>
+                        <button type="button" class="btn btn-info" @onclick="@(() => OnDeliverClick.InvokeAsync(Contract))">Deliver</button>
                     }
                 </div>
             }
         </div>
         <div>
-            @if (Contract.Terms.Goods.All(x => x.Fulfilled == x.UnitsRequired))
+            @if (Contract.Terms.Deliveries.All(x => x.Fulfilled == x.UnitsRequired))
             {
                 <button type="button" class="btn btn-success">Fulfill</button>
             }
@@ -56,6 +56,8 @@
 </div>
 @code {
     [Parameter] public Contract Contract { get; set; }
+    [Parameter] public EventCallback<Contract> OnDeliverClick { get; set; }
+
     private string Error = string.Empty;
 
     private async Task AcceptContract ()
