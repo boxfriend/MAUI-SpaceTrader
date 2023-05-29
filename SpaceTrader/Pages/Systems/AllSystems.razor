@@ -1,5 +1,6 @@
 ﻿@page "/allsystems"
 @inject ApiClient _client
+@inject SystemDbController _systemDatabase
 @inject NavigationManager _navManager
 <h3>AllSystems</h3>
 
@@ -80,6 +81,7 @@
 
     private async Task LoadPage (int page)
     {
+        Systems = null;
         page = Math.Clamp(page, 1, MaxPages);
         var request = new RestRequest("systems", Method.Get);
         request.AddParameter("limit", _limit);
@@ -92,6 +94,7 @@
             _page = page;
             _total = response.Meta.Total;
             Systems = response.Data;
+            await _systemDatabase.InsertOrReplace(Systems);
         } else
         {
             Error = "Unable to retrieve ships, make sure you are logged in";
