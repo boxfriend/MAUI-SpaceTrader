@@ -61,8 +61,8 @@ public record ContractPayment
 
 public record ContractDeliverGood
 {
-    [ForeignKey(typeof(ContractTerms)),Indexed] public string TermsID { get; set; }
-    [PrimaryKey,AutoIncrement] public int ID { get; set; }
+    [ForeignKey(typeof(ContractTerms)),Indexed(Unique = true)] public string TermsID { get; set; }
+    [PrimaryKey] public string ID { get => $"{TermsID}_{TradeSymbol}"; set { return; } }
     public string TradeSymbol { get; set; }
     public string DestinationSymbol { get; set; }
     public int UnitsRequired { get; set; }
