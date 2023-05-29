@@ -1,61 +1,33 @@
 ﻿using Microsoft.Extensions.Logging;
 using SQLite;
+using SQLiteNetExtensionsAsync.Extensions;
 
 namespace SpaceTrader.Data;
 
-internal class SystemDbController
+internal class SystemDbController : BaseDbController
 {
-    private readonly string _dbPath;
-    private SQLiteAsyncConnection _connection;
+    public SystemDbController (string path, ApiClient client, ILogger<BaseDbController> logger) : base(path, client, logger) { }
 
-    private readonly ApiClient _client;
-    private readonly ILogger<SystemDbController> _logger;
-
-    public SystemDbController (string path, ApiClient client, ILogger<SystemDbController> logger)
+    protected override async Task Initialize ()
     {
-        _dbPath = path;
-        _client = client;
-        _logger = logger;
-    }
-
-    public async Task InitializeAsync ()
-    {
-
-        if (_connection != null)
+        if (_isInitialized)
             return;
 
-        _connection = new(_dbPath);
-
+        _isInitialized = true;
         await _connection.CreateTableAsync<System>();
         await _connection.CreateTableAsync<SystemWaypoint>();
     }
-
-    public async Task<List<System>> GetAll ()
+    public async Task Insert (params System[] systems)
     {
-        await InitializeAsync();
-        return await _connection.Table<System>().ToListAsync();
-    }
-
-    public async Task<System> Get (string symbol)
-    {
-        await InitializeAsync();
-        return await _connection.FindAsync<System>(symbol);
-    }
-    public async Task InsertOrReplace (params System[] systems)
-    {
-        await InitializeAsync();
+        await Initialize();
         foreach(var data in systems)
         {
-            await _connection.InsertOrReplaceAsync(data);
             foreach(var waypoint in data.Waypoints)
             {
                 waypoint.System = data.Symbol;
-                await _connection.InsertOrReplaceAsync(waypoint);
             }
         }
+
+        await _connection.InsertAllWithChildrenAsync(systems, true);
     }
-
-
-    public async Task Delete (System data) => await _connection.DeleteAsync(data);
-
 }
