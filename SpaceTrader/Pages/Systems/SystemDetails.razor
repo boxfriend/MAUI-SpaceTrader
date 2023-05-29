@@ -1,5 +1,6 @@
 ﻿@page "/systemdetails/{symbol}"
 @inject ApiClient _client
+@inject SystemDbController _systemDatabase
 
 @if (!string.IsNullOrWhiteSpace(Error))
 {
@@ -26,15 +27,17 @@
 
     protected override async Task OnInitializedAsync ()
     {
-        var request = new RestRequest($"/systems/{Symbol}", Method.Get);
-        var response = await _client.GetRequest<System>(request, true);
+        // var request = new RestRequest($"/systems/{Symbol}", Method.Get);
+        // var response = await _client.GetRequest<System>(request, true);
 
-        if (response is not null)
-        {
-            _system = response.Data;
-        } else
-        {
-            Error = "Unable to retrieve ship, please make sure you are logged in";
-        }
+        // if (response is not null)
+        // {
+        //     _system = response.Data;
+        // } else
+        // {
+        //     Error = "Unable to retrieve ship, please make sure you are logged in";
+        // }
+
+        _system = await _systemDatabase.Get(Symbol);
     }
 }
