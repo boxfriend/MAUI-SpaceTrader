@@ -2,6 +2,7 @@
 @using SpaceTrader.Components.Contracts
 @inject ApiClient _client
 @inject AgentDbController _database
+@inject NavigationManager _navManager
 <h3>Contracts</h3>
 @if(_contracts is not null && _contracts.Count() > 0)
 {
@@ -29,7 +30,7 @@ else
                     <button type="button" class="btn-close"
                     @onclick="@CloseDetails" />
                 </div>
-                <div class="modal-body"><ContractDetails Contract="@_toShow" /></div>
+                <div class="modal-body"><ContractDetails Contract="@_toShow" OnDeliverClick="@DetailsClick" /></div>
             </div>
         </div>
     </div>
@@ -71,6 +72,8 @@ else
         if (response is not null)
         {
             _toShow = response.Data with { AccountID = _client.LoggedInAgent.AccountID };
+            _toShow.Terms.ID = _toShow.ID;
+            _toShow.Terms.Payment.ID = _toShow.ID;
             await _database.InsertContracts(_toShow);
         } else
         {
@@ -92,4 +95,9 @@ else
     }
 
     private void SortContracts() => _contracts = _contracts.OrderByDescending(x => x.Accepted).ThenBy(x => x.Accepted ? x.Terms.Deadline : x.Expiration);
+
+    private void DetailsClick(Contract contract)
+    {
+        _navManager.NavigateTo($"delivercontract/{contract.ID}");
+    }
 }
