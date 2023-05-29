@@ -18,7 +18,7 @@ public class ShipData
     public int Fuel { get; set; }
     #endregion
     #region Cargo
-    [OneToMany] public List<CargoItem> Inventory { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<CargoItem> Inventory { get; set; }
     public int Capacity { get; set; }
     public int Contained { get; set; }
     #endregion
