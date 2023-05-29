@@ -108,7 +108,7 @@
                     var data = ShipData.FromApiObject(ship);
                     data.AccountID = _client.LoggedInAgent.AccountID;
                     Ships.Add(data);
-                    await _shipDatabase.InsertOrUpdate(data);
+                    await _shipDatabase.Insert(data);
                 }
             }
             else

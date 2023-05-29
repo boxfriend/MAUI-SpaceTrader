@@ -4,6 +4,7 @@
 @inject ApiClient _client
 @inject AgentDbController _database
 @inject ShipDbController _shipsDb
+@inject ContractDbController _contractsDb
 @inject NavigationManager _navManager
 
 <h1>Agents</h1>
@@ -126,7 +127,7 @@
         var agent = await _client.RetrieveAgent(token);
         if(agent is not null)
         {
-            await _database.Create(agent);
+            await _database.Insert(agent);
             _allAgents.Add(agent);
             _client.Login(agent);
         }
@@ -151,16 +152,16 @@
         {
             var agent = registration.Agent with { Token = registration.Token };
             var accountID = agent.AccountID;
-            await _database.Create(agent);
+            await _database.Insert(agent);
             _allAgents.Add(agent);
             _client.Login(agent);
 
             var contract = registration.Contract with { AccountID = accountID };
-            await _database.InsertContracts(contract);
+            await _contractsDb.Insert(contract);
 
             var ship = ShipData.FromApiObject(registration.Ship);
             ship.AccountID = accountID;
-            await _shipsDb.InsertOrUpdate(ship);
+            await _shipsDb.Insert(ship);
         }
         else
         {
@@ -190,7 +191,7 @@
         if (response is not null)
         {
             var myAgent = response.Data;
-            await _database.Update(myAgent);
+            await _database.Insert(myAgent);
         } else
         {
             Error = "Unable to sign in. Please ensure you have a valid internet connection and a valid API token.";

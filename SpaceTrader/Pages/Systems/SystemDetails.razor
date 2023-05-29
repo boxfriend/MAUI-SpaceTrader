@@ -38,6 +38,6 @@
         //     Error = "Unable to retrieve ship, please make sure you are logged in";
         // }
 
-        _system = await _systemDatabase.Get(Symbol);
+        _system = await _systemDatabase.Get<Symbol>(Symbol);
     }
 }
