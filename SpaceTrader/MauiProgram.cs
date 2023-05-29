@@ -42,6 +42,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<AgentDbController>(s, path));
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ShipDbController>(s, path));
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<SystemDbController>(s, path));
+		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ContractDbController>(s, path));
 
 		builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<ApiClient>(s));
 
