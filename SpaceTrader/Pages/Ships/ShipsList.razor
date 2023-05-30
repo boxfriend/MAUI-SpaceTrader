@@ -41,8 +41,8 @@
                         <tr>
                             <td>@count</td>
                             <td>@ship.Symbol</td>
-                            <td>@ship.Role</td>
-                            <td>@ship.WaypointSymbol</td>
+                            <td>@ship.Registration.Role</td>
+                            <td>@ship.Nav.WaypointSymbol</td>
                             <td>
                                 <button type="button" class="btn btn-info"
                                 @onclick="(() => ShipDetails(ship.Symbol))">
@@ -65,7 +65,7 @@
     }
 </div>
 @code {
-    private List<ShipData> Ships { get; set; }
+    private List<Ship> Ships { get; set; }
 
     private string Error = string.Empty;
 
@@ -105,10 +105,9 @@
                 total = response.Meta.Total;
                 foreach(var ship in response.Data)
                 {
-                    var data = ShipData.FromApiObject(ship);
-                    data.AccountID = _client.LoggedInAgent.AccountID;
-                    Ships.Add(data);
-                    await _shipDatabase.Insert(data);
+                    ship.AccountID = _client.LoggedInAgent.AccountID;
+                    Ships.Add(ship);
+                    await _shipDatabase.Insert(_client.LoggedInAgent.AccountID, ship);
                 }
             }
             else

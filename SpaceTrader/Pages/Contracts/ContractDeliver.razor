@@ -15,7 +15,7 @@
             @foreach(var ship in _ships)
             {
                 <tr>
-                    <td>@ship.Name</td>
+                    <td>@ship.Symbol</td>
                 </tr>
             }
         </tbody>
@@ -27,13 +27,13 @@
     [Parameter] public string Item { get; set; }
 
     private Contract _contractDetails;
-    private IEnumerable<ShipData> _ships;
+    private IEnumerable<Ship> _ships;
 
     protected override async Task OnInitializedAsync ()
     {
         _contractDetails = await _agentDb.Get<Contract>(Contract);
         _ships = await _shipDb.GetAgentShips(_client.LoggedInAgent);
         var deliveries = _contractDetails.Terms.Deliveries;
-        _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.WaypointSymbol && ship.Inventory.Any(i => i.Symbol == d.TradeSymbol)));
+        _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.Nav.WaypointSymbol && ship.Cargo.Inventory.Any(i => i.Symbol == d.TradeSymbol)));
     }
 }
