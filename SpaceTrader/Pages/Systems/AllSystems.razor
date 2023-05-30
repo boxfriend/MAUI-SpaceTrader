@@ -94,7 +94,8 @@
             _page = page;
             _total = response.Meta.Total;
             Systems = response.Data;
-            await _systemDatabase.Insert(Systems);
+            //TODO: Fix system relationships/null keys
+            //await _systemDatabase.Insert(Systems);
         } else
         {
             Error = "Unable to retrieve ships, make sure you are logged in";
