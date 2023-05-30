@@ -19,7 +19,10 @@ internal class AgentDbController : BaseDbController
             data.Token = agent.Token;
         }
 
-        await _connection.InsertOrReplaceWithChildrenAsync(data, recursive);
+        if(recursive)
+            await _connection.InsertOrReplaceWithChildrenAsync(data, recursive);
+        else
+            await _connection.InsertOrReplaceAsync(data);
 
         if (_client.LoggedInAgent.AccountID == data.AccountID)
         {
