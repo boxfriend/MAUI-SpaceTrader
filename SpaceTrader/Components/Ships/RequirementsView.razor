@@ -1,20 +1,23 @@
-﻿<div>
-    <table class="table caption-top">
-        <caption>Requirements</caption>
-        <thead>
-            <th>Power</th>
-            <th>Crew</th>
-            <th>Slots</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@Requirements.Power</td>
-                <td>@Requirements.Crew</td>
-                <td>@Requirements.Slots</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+﻿@if(Requirements is not null)
+{  
+    <div>
+        <table class="table caption-top">
+            <caption>Requirements</caption>
+            <thead>
+                <th>Power</th>
+                <th>Crew</th>
+                <th>Slots</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Requirements.Power</td>
+                    <td>@Requirements.Crew</td>
+                    <td>@Requirements.Slots</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
 
 
 @code {

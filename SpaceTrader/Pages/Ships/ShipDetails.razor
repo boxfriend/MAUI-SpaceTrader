@@ -204,18 +204,20 @@ else
 
     protected override async Task OnInitializedAsync ()
     {
-        var request = new RestRequest($"/my/ships/{Symbol}", Method.Get);
-        var response = await _client.GetRequest<Ship>(request, true);
+        // var request = new RestRequest($"/my/ships/{Symbol}", Method.Get);
+        // var response = await _client.GetRequest<Ship>(request, true);
 
-        if(response is not null)
-        {
-            _ship = response.Data;
-            await _shipDatabase.Insert(_client.LoggedInAgent.AccountID, _ship);
-        }
-        else
-        {
-            Error = "Unable to retrieve ship, please make sure you are logged in";
-        }
+        // if(response is not null)
+        // {
+        //     _ship = response.Data;
+        //     await _shipDatabase.Insert(_client.LoggedInAgent.AccountID, _ship);
+        // }
+        // else
+        // {
+        //     Error = "Unable to retrieve ship, please make sure you are logged in";
+        // }
+
+        _ship = await _shipDatabase.Get<Ship>(Symbol);
     }
 
     private void ToDestinationSelect()
