@@ -8,17 +8,11 @@ internal class AgentDbController : BaseDbController
 
     protected override async Task Initialize()
     {
-        if(_isInitialized) return;
-
-        _isInitialized = true;
         await _connection.CreateTableAsync<Agent>();
-        await _connection.CreateTableAsync<ShipData>();
     }
 
     public async Task Insert (Agent data)
     {
-        await Initialize();
-
         if(string.IsNullOrWhiteSpace(data.Token))
         {
             var agent = await _connection.GetAsync<Agent>(data.AccountID);

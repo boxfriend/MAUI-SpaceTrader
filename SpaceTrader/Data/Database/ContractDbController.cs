@@ -9,10 +9,6 @@ internal class ContractDbController : BaseDbController
 
     protected override async Task Initialize ()
     {
-        if (_isInitialized)
-            return;
-
-        _isInitialized = true;
         await _connection.CreateTableAsync<Contract>();
         await _connection.CreateTableAsync<ContractTerms>();
         await _connection.CreateTableAsync<ContractPayment>();
@@ -20,15 +16,10 @@ internal class ContractDbController : BaseDbController
     }
 
     public async Task<List<Contract>> GetAllFromAgent(Agent agent) => await GetAllFromAgent(agent.AccountID);
-    public async Task<List<Contract>> GetAllFromAgent(string agentID)
-    {
-        await Initialize();
-        return await _connection.GetAllWithChildrenAsync<Contract>(c => c.AccountID == agentID, true);
-    }
+    public async Task<List<Contract>> GetAllFromAgent (string agentID) => await _connection.GetAllWithChildrenAsync<Contract>(c => c.AccountID == agentID, true);
 
     public async Task Insert (params Contract[] contracts)
     {
-        await Initialize();
         foreach (var contract in contracts)
         {
             contract.Terms.ID = contract.ID;

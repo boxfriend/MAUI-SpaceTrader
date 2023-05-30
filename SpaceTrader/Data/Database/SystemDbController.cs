@@ -10,16 +10,11 @@ internal class SystemDbController : BaseDbController
 
     protected override async Task Initialize ()
     {
-        if (_isInitialized)
-            return;
-
-        _isInitialized = true;
         await _connection.CreateTableAsync<System>();
         await _connection.CreateTableAsync<SystemWaypoint>();
     }
     public async Task Insert (params System[] systems)
     {
-        await Initialize();
         foreach(var data in systems)
         {
             foreach(var waypoint in data.Waypoints)
