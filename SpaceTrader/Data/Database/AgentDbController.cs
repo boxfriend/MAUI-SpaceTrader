@@ -11,7 +11,7 @@ internal class AgentDbController : BaseDbController
         await _connection.CreateTableAsync<Agent>();
     }
 
-    public async Task Insert (Agent data)
+    public async Task Insert (Agent data, bool recursive = true)
     {
         if(string.IsNullOrWhiteSpace(data.Token))
         {
@@ -19,7 +19,7 @@ internal class AgentDbController : BaseDbController
             data.Token = agent.Token;
         }
 
-        await _connection.InsertOrReplaceWithChildrenAsync(data, true);
+        await _connection.InsertOrReplaceWithChildrenAsync(data, recursive);
 
         if (_client.LoggedInAgent.AccountID == data.AccountID)
         {

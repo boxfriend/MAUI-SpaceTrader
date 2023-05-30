@@ -159,9 +159,7 @@
             var contract = registration.Contract with { AccountID = accountID };
             await _contractsDb.Insert(contract);
 
-            var ship = ShipData.FromApiObject(registration.Ship);
-            ship.AccountID = accountID;
-            await _shipsDb.Insert(ship);
+            await _shipsDb.Insert(agent.AccountID, registration.Ship);
         }
         else
         {
@@ -191,7 +189,7 @@
         if (response is not null)
         {
             var myAgent = response.Data;
-            await _database.Insert(myAgent);
+            await _database.Insert(myAgent, false);
         } else
         {
             Error = "Unable to sign in. Please ensure you have a valid internet connection and a valid API token.";
