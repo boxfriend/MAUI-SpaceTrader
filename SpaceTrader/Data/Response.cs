@@ -23,7 +23,7 @@ public record Agent
     public string Headquarters { get; set; }
     public int Credits { get; set; }
     public string StartingFaction { get; set; }
-    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<ShipData> Ships { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<Ship> Ships { get; set; }
     [OneToMany(CascadeOperations = CascadeOperation.All)] public List<Contract> Contracts { get; set; }
 }
 public record Faction (string Symbol, string Name, string Description, string Headquarters, FactionTrait[] Traits);
@@ -81,21 +81,128 @@ public record TransactionResponse(Agent Agent, ShipCargo Cargo, MarketTransactio
 
 #region Ships
 public record ScannedShip(string Symbol, ShipRegistration Registration, ShipNav Nav, ShipFrame Frame, ShipReactor Reactor, ShipEngine Engine, ShipMount[] Mounts);
-public record Ship(string Symbol, ShipRegistration Registration, ShipNav Nav, ShipCrew Crew, ShipFrame Frame, ShipReactor Reactor, ShipEngine Engine, ShipModule[] Modules, ShipMount[] Mounts, ShipCargo Cargo, ShipFuel Fuel);
-public record ShipCargo(int Capacity, int Units, ShipCargoItem[] Inventory);
-public record ShipCargoItem(string Symbol, string Name, string Description, int Units);
-public record ShipCrew(int Current, int Required, int Capacity, string Rotation, int Morale, int Wages);
-public record ShipEngine(string Symbol, string Name, string Description, int Condition, float Speed, ShipRequirements Requirements);
-public record ShipFrame(string Symbol, string Name, string Description, int Condition, int ModuleSlots, int MountingPoints, int FuelCapacity, ShipRequirements Requirements);
-public record ShipFuel(int Current, int Capacity, ConsumedFuel Consumed);
+public record Ship
+{
+    [ForeignKey(typeof(Agent)), Indexed] public string AccountID { get; set; }
+    [PrimaryKey] public string Symbol { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipRegistration Registration { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipNav Nav { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipCrew Crew { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipFrame Frame { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipReactor Reactor { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipEngine Engine { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<ShipModule> Modules { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<ShipMount> Mounts { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipCargo Cargo { get; set; }
+    [OneToOne(CascadeOperations = CascadeOperation.All)] public ShipFuel Fuel { get; set; }
+}
+public record ShipCargo
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public int Capacity { get; set; }
+    public int Units { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<ShipCargoItem> Inventory { get; set; }
+}
+
+public record ShipCargoItem
+{
+    [ForeignKey(typeof(ShipCargo))] public string CargoID { get; set; }
+    [PrimaryKey] public string ID { get => $"{CargoID}-{Symbol}"; set { return; } }
+    public string Symbol { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Units { get; set; }
+}
+public record ShipCrew
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public int Current {get;set;}
+    public int Required {get;set;}
+    public int Capacity {get;set;}
+    public string Rotation {get;set;}
+    public int Morale { get; set; }
+    public int Wages {get;set;}
+}
+public record ShipEngine
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public string Symbol { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Condition { get; set; }
+    public float Speed { get; set; }
+    [Ignore] public ShipRequirements Requirements { get; set; }
+}
+public record ShipFrame
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public string Symbol { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Condition { get; set; }
+    public int ModuleSlots { get; set; }
+    public int MountingPoints { get; set; }
+    public int FuelCapacity { get; set; }
+    [Ignore] public ShipRequirements Requirements { get; set; }
+}
+public record ShipFuel
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public int Current { get; set; }
+    public int Capacity { get; set; }
+    [Ignore] public ConsumedFuel Consumed { get; set; }
+}
 public record ConsumedFuel(int Amount, DateTime Timestamp);
-public record ShipModule(string Symbol, int Capacity, int Range, string Name, string Description, ShipRequirements Requirements);
-public record ShipMount(string Symbol, string Name, string Description, int Strength, string[] Deposits, ShipRequirements Requirements);
-public record ShipNav(string SystemSymbol, string WaypointSymbol, ShipNavRoute Route, string Status, string FlightMode);
+public record ShipModule
+{
+    [ForeignKey(typeof(Ship))] public string ShipID { get; set; }
+    [PrimaryKey] public string ID { get => $"{ShipID}-{Symbol}"; set { return; } }
+    public string Symbol { get; set; }
+    public int Capacity { get; set; }
+    public int Range { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    [Ignore] public ShipRequirements Requirements { get; set; }
+}
+public record ShipMount
+{
+    [ForeignKey(typeof(Ship))] public string ShipID { get; set; }
+    [PrimaryKey] public string ID { get => $"{ShipID}-{Symbol}"; set { return; } }
+    public string Symbol {get;set;}
+    public string Name {get;set;}
+    public string Description {get;set;}
+    public int Strength {get;set;}
+    [Ignore] public string[] Deposits {get;set;}
+    [Ignore] public ShipRequirements Requirements { get; set; }
+}
+public record ShipNav
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public string SystemSymbol { get; set; }
+    public string WaypointSymbol { get; set; }
+    [Ignore] public ShipNavRoute Route { get; set; }
+    public string Status { get; set; }
+    public string FlightMode { get; set; }
+}
 public record ShipNavRoute(ShipNavRouteWaypoint Destination, ShipNavRouteWaypoint Departure, DateTime DepartureTime, DateTime Arrival);
 public record ShipNavRouteWaypoint(string Symbol, string Type, string SystemSymbol, int X, int Y);
-public record ShipReactor(string Symbol, string Name, string Description, int Condition, int PowerOutput, ShipRequirements Requirements);
-public record ShipRegistration(string Name, string FactionSymbol, string Role);
+public record ShipReactor
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public string Symbol { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Condition { get; set; }
+    public int PowerOutput { get; set; }
+    [Ignore] public ShipRequirements Requirements { get; set; }
+}
+public record ShipRegistration
+{
+    [ForeignKey(typeof(Ship)), PrimaryKey] public string ShipID { get; set; }
+    public string Name { get; set; }
+    public string FactionSymbol { get; set; }
+    public string Role { get; set; }
+}
 public record ShipRequirements (int Power, int Crew, int Slots);
 public record ShipType(string Type);
 public record ToggleDock(ShipNav Nav);
