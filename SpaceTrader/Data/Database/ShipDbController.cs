@@ -58,14 +58,3 @@ internal class ShipDbController : BaseDbController
     public async Task<List<Ship>> GetAgentShips (Agent data) => await GetAgentShips(data.AccountID);
     public async Task<List<Ship>> GetAgentShips (string accountID) => await _connection.GetAllWithChildrenAsync<Ship>(ship => ship.AccountID == accountID, true);
 }
-
-public static class SqliteExtensions
-{
-    public static async Task DeleteAllAsync<T>(this SQLiteAsyncConnection conn, IEnumerable<T> data)
-    {
-        foreach(var d in data)
-        {
-            await conn.DeleteAsync(d);
-        }
-    }
-}
