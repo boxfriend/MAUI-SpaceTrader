@@ -32,6 +32,7 @@ public record FactionTrait (string Type, string Name, string Description);
 
 #region Contracts
 public record ContractAccept(Agent Agent, Contract Contract);
+public record DeliverContract(Contract Contract, ShipCargo Cargo);
 public record Contract
 {
     [ForeignKey(typeof(Agent))] public string AccountID { get; set; }
