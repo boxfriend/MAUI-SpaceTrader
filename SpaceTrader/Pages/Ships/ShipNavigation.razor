@@ -1,5 +1,6 @@
 ﻿@page "/shipdetails/{symbol}/navigation/{system}"
 @inject ApiClient _client
+@inject ShipDbController _shipsDb
 @inject NavigationManager _navManager
 
 <div>@Symbol Navigation</div>
@@ -116,6 +117,7 @@ else
 
     private async Task NavTo(string symbol)
     {
+        var ship = await _shipsDb.Get<Ship>(Symbol);
         var request = new RestRequest($"/my/ships/{Symbol}/navigate");
         request.AddParameter("waypointSymbol", symbol);
 
@@ -123,6 +125,8 @@ else
 
         if(response is not null)
         {
+            ship = ship with { Nav = response.Data.Nav, Fuel = response.Data.Fuel };
+            await _shipsDb.Insert(ship);
             _navManager.NavigateTo($"shipdetails/{Symbol}");
         }
         else
