@@ -31,7 +31,7 @@ else
         <div id="nav" class="accordion-collapse collapse" aria-labelledby="navigationHeader" data-parent="#topAccordion">
             <div class="accordion-body">
                 <NavView Nav=_ship.Nav Symbol="@_ship.Symbol" StateChanged="@(nav => _ship = _ship with {Nav = nav})"/>
-                <FuelView Fuel=_ship.Fuel ShipSymbol="@_ship.Symbol"/>
+                <FuelView Fuel=_ship.Fuel ShipSymbol="@_ship.Symbol" CanRefuel="@(_ship.Nav.Status is "DOCKED")"/>
                 @if(_ship.Nav.Status is "IN_ORBIT")
                 {
                     <button type="button" class="btn btn-primary" @onclick="@ToDestinationSelect">Select Waypoint Destination</button>

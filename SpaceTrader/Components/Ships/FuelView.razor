@@ -4,7 +4,7 @@
 <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="@Fuel.Current" aria-valuemin="0" aria-valuemax="@Fuel.Capacity">
     <div class="progress-bar progress-bar-striped progress-bar-animated @(BarColor()) overflow-visible" style="width: @(FuelPercentage())%">@Fuel.Current / @Fuel.Capacity</div>
 </div>
-@if(FuelPercentage() < 100)
+@if(CanRefuel && FuelPercentage() < 100)
 {
     <button type="button" class="btn btn-secondary" @onclick="@Refuel">Refuel</button>
 }
@@ -15,6 +15,7 @@
 @code {
     [Parameter] public ShipFuel Fuel { get; set; }
     [Parameter] public string ShipSymbol { get; set; }
+    [Parameter] public bool CanRefuel { get; set; }
 
     private float FuelPercentage() => Fuel.Current / (float)Fuel.Capacity * 100;
 
