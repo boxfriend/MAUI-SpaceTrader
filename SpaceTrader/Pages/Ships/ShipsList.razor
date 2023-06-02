@@ -38,6 +38,15 @@
                     var count = 1;
                     foreach (var ship in Ships)
                     {
+                        if(ship.Nav.Status is "IN_TRANSIT")
+                        {
+                            var arriveTime = ship.Nav.Route.Arrival;
+                            if (arriveTime < DateTime.Now)
+                            {
+                                ship.Nav.Status = "IN_ORBIT";
+                                _shipDatabase.Insert(ship.AccountID, ship); //Do not await to prevent locking UI thread when updating ship in Db
+                            }
+                        }
                         <tr>
                             <td>@count</td>
                             <td>@ship.Symbol</td>
@@ -118,4 +127,6 @@
         }
         while (Ships.Count < total);
     }
+
+    
 }
