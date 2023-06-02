@@ -1,14 +1,22 @@
 ﻿@page "/delivercontract/{contract}"
 @inject ApiClient _client
-@inject AgentDbController _agentDb
 @inject ShipDbController _shipDb
+@inject ContractDbController _contractDb
 
 @if(_ships is not null)
 {
-    <table>
+    <table class="table table-striped table-responsive">
         <thead>
             <tr>
                 <th>Ship</th>
+                @if(_contractDetails.Terms.Deliveries is not null)
+                {
+                    @foreach (var delivery in _contractDetails.Terms.Deliveries)
+                    {
+                        <th>@delivery.TradeSymbol</th>
+                    }
+                    <th>Deliver</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -16,7 +24,40 @@
             {
                 <tr>
                     <td>@ship.Symbol</td>
+                    @if (_contractDetails.Terms.Deliveries is not null)
+                    {
+                        @foreach (var delivery in _contractDetails.Terms.Deliveries)
+                        {
+                            <td>@GetInvCount(ship, delivery.TradeSymbol)</td>
+                        }
+                        <td>
+                            <button type="button" class="btn btn-info" data-bs-toggle="collapse" data-bs-target="#cargo-@ship.Symbol" aria-expanded="false" aria-controls="cargo-@ship.Symbol">
+                                DELIVER
+                            </button>
+                        </td>
+                    }
+
                 </tr>
+                <div class="collapse" id="cargo-@ship.Symbol" colspan="3">
+                    <div class="card card-body">
+                        @{ string item = string.Empty; var count = 0; }
+                        <select class="form-select" @bind="@item">
+                            <option selected>Select an Item to deliver</option>
+                                @if (_contractDetails.Terms.Deliveries is not null)
+                                { 
+                                    @foreach (var delivery in _contractDetails.Terms.Deliveries)
+                                    {
+                                        @if(ship.Cargo.Inventory.Any(x => x.Symbol == delivery.TradeSymbol))
+                                        {
+                                            <option value="@delivery.TradeSymbol">@delivery.TradeSymbol</option>
+                                        }
+                                    }
+                                }
+                        </select>
+                        <input type="number" min="0" max="@GetInvCount(ship,item)" @bind="@count" disabled="@string.IsNullOrWhiteSpace(item)"/>
+                        <button type="button" class="btn btn-success" disabled="@string.IsNullOrWhiteSpace(item)" @onclick="@(async () => await DeliverItem(ship.Symbol,item,count))">Submit</button>
+                    </div>
+                </div>
             }
         </tbody>
     </table>
@@ -31,9 +72,38 @@
 
     protected override async Task OnInitializedAsync ()
     {
-        _contractDetails = await _agentDb.Get<Contract>(Contract);
+        _contractDetails = await _contractDb.Get<Contract>(Contract);
         _ships = await _shipDb.GetAgentShips(_client.LoggedInAgent);
         var deliveries = _contractDetails.Terms.Deliveries;
-        _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.Nav.WaypointSymbol && ship.Cargo.Inventory.Any(i => i.Symbol == d.TradeSymbol)));
+        _ships = _ships.Where(ship => deliveries.Any(d => d.DestinationSymbol == ship.Nav.WaypointSymbol /* && ship.Cargo.Inventory.Any(i => i.Symbol == d.TradeSymbol) */));
+    }
+
+    private int GetInvCount(Ship ship, string itemType)
+    {
+        var cargoItem = ship.Cargo.Inventory.Find(x => x.Symbol == itemType);
+        if (cargoItem is not null)
+            return cargoItem.Units;
+
+        return 0;
+    }
+
+    private async Task DeliverItem(string ship, string item, int count)
+    {
+        var request = new RestRequest($"my/contracts/{Contract}/deliver");
+        request.AddParameter("shipSymbol", ship);
+        request.AddParameter("tradeSymbol", item);
+        request.AddParameter("units", count);
+
+        var response = await _client.PostRequest<DeliverContract>(request, true);
+        if(response is not null)
+        {
+            _contractDetails = response.Data.Contract with { AccountID = _contractDetails.AccountID };
+            await _contractDb.Insert(_contractDetails);
+
+            var cargo = response.Data.Cargo with { ShipID = ship };
+            var shipData = _ships.Single(s => s.Symbol == ship);
+            shipData.Cargo = cargo;
+            await _shipDb.Insert(shipData.AccountID, shipData);
+        }
     }
 }
