@@ -13,6 +13,19 @@
         </div>
     </div>
 
+    @if(_status.Links is not null && _status.Links.Length > 0)
+    {
+        <div>
+            <h5>Relevant Links:</h5>
+        </div>
+        @foreach(var link in _status.Links)
+        {
+            <div>
+                <a href="@link.Url">@link.Name</a>
+            </div>
+        }
+    }
+
     @if(_status.Announcements is not null && _status.Announcements.Length > 0)
     {
         <div aria-live="polite" aria-atomic="true" class="position-relative">
