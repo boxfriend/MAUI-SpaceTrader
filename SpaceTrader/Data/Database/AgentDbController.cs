@@ -24,7 +24,7 @@ internal class AgentDbController : BaseDbController
         else
             await _connection.InsertOrReplaceAsync(data);
 
-        if (_client.LoggedInAgent.AccountID == data.AccountID)
+        if (_client.LoggedInAgent?.AccountID == data.AccountID)
         {
             _client.Login(data);
         }
