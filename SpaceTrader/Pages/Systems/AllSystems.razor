@@ -12,7 +12,11 @@
     </div>
 }
 
-@if (Systems != null)
+<div>
+    <button class="btn btn-danger" @onclick="@RefreshAllSystems">Refresh Systems Database</button>
+</div>
+
+@if (Systems != null && Systems.Count > 0)
 {
     <table class="table">
         <thead>
@@ -25,38 +29,52 @@
             </tr>
         </thead>
         <tbody>
-
-            @{
-                var count = ((_page - 1) * _limit) + 1;
-                foreach (var system in Systems)
-                {
-                    <tr>
-                        <td>@count</td>
-                        <td>@system.Symbol</td>
-                        <td>@system.Type</td>
-                        <td>@system.SectorSymbol</td>
-                        <td>
-                            <button type="button" class="btn btn-info"
-                            @onclick="(() => SystemDetails(system))">
-                                Details
-                            </button>
-                        </td>
-                    </tr>
-                    count++;
-                }
+        @{
+            var count = (_page * _limit);
+            for(var i = 0; i < _limit && i + count < Systems.Count; i++)
+            {
+                var system = Systems[i + count];
+                <tr>
+                    <td>@(i + count + 1)</td>
+                    <td>@system.Symbol</td>
+                    <td>@system.Type</td>
+                    <td>@system.SectorSymbol</td>
+                    <td>
+                        <button type="button" class="btn btn-info"
+                        @onclick="(() => SystemDetails(system))">
+                            Details
+                        </button>
+                    </td>
+                </tr>
             }
+        }
         </tbody>
     </table>
 
-    <div class="btn-group">
-        <button type="button" class="btn btn-info" disabled="@(_page == 1)"
-        @onclick="(() => LoadPage(_page - 1))">
-            Prev Page
-        </button>
-        <button type="button" class="btn btn-info" disabled="@(_total < _page * _limit)"
-        @onclick="(() => LoadPage(_page + 1))">
-            Next Page
-        </button>
+    <div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(_page < 1 ? "disabled" : "")">
+                    <a class="page-link" aria-label="Previous" aria-disabled="@(_page < 1)" @onclick="@(() => LoadPage(_page - 1))">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @{
+                    var min = Math.Clamp(_page - 2, 0, MaxPages);
+                    var max = Math.Clamp(_page + 3, 0, MaxPages);
+                }
+                @for(var i = min; i < max; i++)
+                {
+                    var page = i;
+                    <li class="page-item @(_page == page ? "active" : "")"><a class="page-link" @onclick="@(() => LoadPage(page))" aria-disabled="@(_page == i)">@(page + 1)</a></li>
+                }
+                <li class="page-item @(_page >= MaxPages - 1 ? "disabled" : "")">
+                    <a class="page-link" aria-label="Next" aria-disabled="@(_page >= MaxPages)" @onclick="@(() => LoadPage(_page + 1))">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 } else
 {
@@ -64,11 +82,11 @@
 }
 
 @code {
-    private System[] Systems { get; set; }
+    private List<System> Systems { get; set; }
 
     private int _total = 1;
-    private int _page = 1;
-    private const int _limit = 20;
+    private int _page = 0;
+    private int _limit = 100;
 
     private string Error { get; set; }
 
@@ -76,30 +94,34 @@
 
     protected override async Task OnInitializedAsync ()
     {
-        await LoadPage(_page);
+        Systems = await _systemDatabase.GetAll<System>();
+        _total = Systems.Count;
+
+        if(_total < 1)
+        {
+            await RefreshAllSystems();
+        }
+        LoadPage(0);
     }
 
-    private async Task LoadPage (int page)
+    private async Task RefreshAllSystems()
     {
         Systems = null;
-        page = Math.Clamp(page, 1, MaxPages);
-        var request = new RestRequest("systems", Method.Get);
-        request.AddParameter("limit", _limit);
-        request.AddParameter("page", page);
+        var response = await _client.GetAllSystems();
 
-        var response = await _client.GetRequest<System[]>(request, true);
-
-        if (response is not null)
+        if(response is not null)
         {
-            _page = page;
-            _total = response.Meta.Total;
-            Systems = response.Data;
-            //TODO: Fix system relationships/null keys
-            //await _systemDatabase.Insert(Systems);
-        } else
-        {
-            Error = "Unable to retrieve ships, make sure you are logged in";
+            Systems = response;
+            _total = Systems.Count;
+            await _systemDatabase.Insert(Systems.ToArray());
+            LoadPage(0);
         }
+    }
+
+    private void LoadPage (int page)
+    {
+        _page = Math.Clamp(page, 0, MaxPages - 1);
+        this.StateHasChanged();
     }
 
     private void SystemDetails(System system)
