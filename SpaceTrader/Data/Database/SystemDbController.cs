@@ -20,6 +20,13 @@ internal class SystemDbController : BaseDbController
             data.Waypoints.ForEach(x => x.System = data.Symbol);
             data.Factions.ForEach(x => x.System = data.Symbol);
         }
-        await _connection.InsertAllWithChildrenAsync(systems, true);
+        try
+        {
+            await _connection.InsertOrReplaceAllWithChildrenAsync(systems, true);
+        } catch (Exception ex)
+        {
+            _logger.LogCritical(ex.Message);
+            throw;
+        }
     }
 }
