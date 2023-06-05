@@ -235,12 +235,13 @@ public record System
     public int X { get; set; }
     public int Y { get; set; }
     [OneToMany(CascadeOperations = CascadeOperation.All)] public List<SystemWaypoint> Waypoints { get; set; }
-    [Ignore] public string[] Factions { get; set; }
+    [OneToMany(CascadeOperations = CascadeOperation.All)] public List<SystemFaction> Factions { get; set; }
 }
 public record SystemFaction
 {
     public string Symbol { get; set; }
-    public string System { get; set; }
+    [ForeignKey(typeof(System))] public string System { get; set; }
+    [PrimaryKey] public string ID { get => $"{System}-{Symbol}"; set { } }
 }
 public record SystemType(string Type);
 public record SystemWaypoint

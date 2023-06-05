@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SQLite;
 using SQLiteNetExtensionsAsync.Extensions;
 
 namespace SpaceTrader.Data;
@@ -12,17 +11,15 @@ internal class SystemDbController : BaseDbController
     {
         await _connection.CreateTableAsync<System>();
         await _connection.CreateTableAsync<SystemWaypoint>();
+        await _connection.CreateTableAsync<SystemFaction>();
     }
     public async Task Insert (params System[] systems)
     {
         foreach(var data in systems)
         {
-            foreach(var waypoint in data.Waypoints)
-            {
-                waypoint.System = data.Symbol;
-            }
+            data.Waypoints.ForEach(x => x.System = data.Symbol);
+            data.Factions.ForEach(x => x.System = data.Symbol);
         }
-
         await _connection.InsertAllWithChildrenAsync(systems, true);
     }
 }
