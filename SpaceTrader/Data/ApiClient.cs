@@ -141,4 +141,26 @@ internal class ApiClient
             return null;
         }
     }
+
+    public async Task<List<System>> GetAllSystems()
+    {
+        var request = new RestRequest("systems.json", Method.Get);
+
+        try
+        {
+            var response = await _client.ExecuteGetAsync<List<System>>(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError(response.StatusDescription);
+            }
+
+            return response.IsSuccessful ? response.Data : null;
+
+        } catch (Exception ex)
+        {
+            _logger.LogCritical(ex.Message);
+            return null;
+        }
+    }
 }
